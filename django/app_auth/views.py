@@ -68,15 +68,15 @@ class RegisterUserView(View):
         if password == confirm_password:
             if not User.objects.filter(username=username):
 
-                verify_code = "".join([ str(i) for i in random.sample([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 6)])
+                # verify_code = "".join([ str(i) for i in random.sample([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 6)])
 
                 user = User.objects.create_user(
                     username=username,
                     password=password,
                     country_code=country_code,
                     phone_number=phone_number,
-                    verify_code = verify_code,
-                    is_active = False
+                    # # verify_code = verify_code,
+                    is_active = True
                 )
 
                 if user:

@@ -21,7 +21,7 @@ class User(AbstractUser):
     # USERNAME_FIELD = 'email'
     # REQUIRED_FIELDS = []
 
-    email = models.EmailField('Email address', unique=True)
+    email = models.EmailField('Email address', unique=True, null=True, blank=True)
     country_code = models.CharField("Country Code", max_length=10, null=True, blank=True)
     phone_number = models.CharField("Phone Number", max_length=20, null=True, blank=True)
     is_email_activated = models.BooleanField("Email Activated", default=False)
@@ -34,4 +34,4 @@ class User(AbstractUser):
         return f"+{self.country_code}{self.phone_number[1:] if self.phone_number[0] == '0' else self.phone_number}"
 
     def str(self):
-        return self.email
+        return self.username
