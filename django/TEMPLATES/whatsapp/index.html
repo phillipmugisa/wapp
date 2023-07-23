@@ -490,7 +490,6 @@
                 reader.onload = () => {
                     const fileData = reader.result;
                     msg_files.push(fileData)
-                    console.log(msg_files)
                 };
 
                 reader.readAsDataURL(file);
@@ -515,7 +514,7 @@
             return {
                 data: {
                     message: msg,
-                    files: msg_files
+                    files: JSON.stringify(msg_files)
                 },
                 timing: timing_data,
                 contacts: selectedContacts
