@@ -483,17 +483,6 @@
 
         function getSendMessageData() {
             let msg = document.querySelector("textarea#msg").value
-            var msg_files = []
-            Array.from(document.querySelector("#msg_files").files).forEach(file => {
-                const reader = new FileReader();
-
-                reader.onload = () => {
-                    const fileData = reader.result;
-                    msg_files.push(fileData)
-                };
-
-                reader.readAsDataURL(file);
-            })
 
             // timing
             let msg_timing_form = document.querySelector("form#msg_timing_form")
@@ -502,6 +491,7 @@
             let single_interval_period = msg_timing_form.querySelector("#single_interval_period")
             let bundle_msg_count = msg_timing_form.querySelector("#bundle_msg_count")
             let bundle_msg_interval = msg_timing_form.querySelector("#bundle_msg_interval")
+            
 
             let timing_data = {
                 day_recurrence: day_recurrence.checked,
@@ -510,15 +500,37 @@
                 bundle_msg_count: bundle_msg_count.value,
                 bundle_msg_interval: bundle_msg_interval.value,
             }
+            
+            var msg_files = []
 
-            msg_data = {
-                message: msg,
-                files: msg_files,
-                timing: timing_data,
-                contacts: selectedContacts
+            const fileInputs = document.querySelector("#msg_files").files;
+
+            // A function that reads each file and resolves when all files are read
+            function readFiles(fileInputs) {
+                return Promise.all(
+                    Array.from(fileInputs).map((file) => {
+                        return new Promise((resolve) => {
+                            const reader = new FileReader();
+                            reader.onload = () => {
+                                const fileData = reader.result;
+                                msg_files.push(fileData);
+                                resolve();
+                            };
+                            reader.readAsDataURL(file);
+                        });
+                    })
+                );
             }
-            console.log("msg_data: ", JSON.stringify(msg_data))
-            return JSON.stringify(msg_data)
+            
+            readFiles(fileInputs).then(() => {
+                return {
+                    message: msg,
+                    files: msg_files,
+                    timing: timing_data,
+                    contacts: selectedContacts
+                }
+            })
+
         }
 
         document.querySelector("#send_message_form")
