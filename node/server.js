@@ -105,6 +105,9 @@ server.on("connection", (socket) => {
                                     type: "message sent",
                                 }));
                             })
+                            .catch ((err) => {
+                                console.log(err)
+                            })
                             .finally(() => {
                                 fs.unlinkSync(filePath);
                             })
@@ -115,6 +118,9 @@ server.on("connection", (socket) => {
                                 socket.send(JSON.stringify({
                                     type: "message sent",
                                 }));
+                            })
+                            .catch ((err) => {
+                                console.log(err)
                             })
                             .finally(() => {
                                 fs.unlinkSync(filePath);
