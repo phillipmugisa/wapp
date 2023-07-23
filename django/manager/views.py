@@ -70,12 +70,14 @@ class AccountView(View):
 class WhatsappView(View):
     template_name = "whatsapp/index.html"
     def get(self, request, *args, **kwargs):
-        context_data = {
-            "social_user" : get_social_user(request),
-            "page_msg": f"",
-            "subscriptions": PaymentModels.PaypalSubscription.objects.filter(
-                user=request.user.id
-            ).order_by("-id")
-        }
-        
-        return render(request, template_name=self.template_name, context=context_data)
+        if request.user.is_authenticated:
+            context_data = {
+                "social_user" : get_social_user(request),
+                "page_msg": f"",
+                "subscriptions": PaymentModels.PaypalSubscription.objects.filter(
+                    user=request.user.id
+                ).order_by("-id")
+            }
+            
+            return render(request, template_name=self.template_name, context=context_data)
+        return redirect(reverse("app_auth:login"))
