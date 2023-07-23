@@ -40,8 +40,8 @@ class loginUserView(View):
         user = auth.authenticate(username=username, password=password)
 
         if user is not None:
-            # if not user.is_phone_activated and not user.is_email_activated:
-            #     messages.add_message(request, messages.ERROR, 'Verify Phone Number or Email to Proceed')
+            # if not user.is_phone_activated and not user.is_username_activated:
+            #     messages.add_message(request, messages.ERROR, 'Verify Phone Number or username to Proceed')
             #     return redirect(reverse("app_auth:login"))
 
             auth.login(request, user)
@@ -59,19 +59,19 @@ class RegisterUserView(View):
         return render(request, self.template_name)
 
     def post(self, request, *args, **kwargs):
-        email = request.POST.get("email", "")
+        username = request.POST.get("username", "")
         country_code = request.POST.get("country_code", "")
         phone_number = request.POST.get("mobile_user", "")
         password = request.POST.get("password", "")
         confirm_password = request.POST.get("confirm_password", "")
 
         if password == confirm_password:
-            if not User.objects.filter(email=email):
+            if not User.objects.filter(username=username):
 
                 verify_code = "".join([ str(i) for i in random.sample([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 6)])
 
                 user = User.objects.create_user(
-                    email=email,
+                    username=username,
                     password=password,
                     country_code=country_code,
                     phone_number=phone_number,
@@ -87,7 +87,7 @@ class RegisterUserView(View):
                 messages.add_message(request, messages.ERROR, 'An Error Occured. Try Again.')
                 return redirect(reverse("app_auth:register"))
             else:
-                messages.add_message(request, messages.ERROR, 'Email not available.')
+                messages.add_message(request, messages.ERROR, 'username not available.')
                 return redirect(reverse("app_auth:register"))
         else:
                 messages.add_message(request, messages.ERROR, 'Passwords entered do not match.')
