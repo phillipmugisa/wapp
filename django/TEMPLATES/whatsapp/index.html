@@ -482,53 +482,56 @@
         }
 
         function getSendMessageData() {
-            let msg = document.querySelector("textarea#msg").value
-
-            // timing
-            let msg_timing_form = document.querySelector("form#msg_timing_form")
-            let day_recurrence = msg_timing_form.querySelector("#day_recurrence")
-            let day_recurrence_day = msg_timing_form.querySelector("#day_recurrence_day")
-            let single_interval_period = msg_timing_form.querySelector("#single_interval_period")
-            let bundle_msg_count = msg_timing_form.querySelector("#bundle_msg_count")
-            let bundle_msg_interval = msg_timing_form.querySelector("#bundle_msg_interval")
-            
-
-            let timing_data = {
-                day_recurrence: day_recurrence.checked,
-                day_recurrence_day: day_recurrence_day.value,
-                single_interval_period: single_interval_period.value,
-                bundle_msg_count: bundle_msg_count.value,
-                bundle_msg_interval: bundle_msg_interval.value,
-            }
-            
-            var msg_files = []
-
-            const fileInputs = document.querySelector("#msg_files").files;
-
-            // A function that reads each file and resolves when all files are read
-            function readFiles(fileInputs) {
-                return Promise.all(
-                    Array.from(fileInputs).map((file) => {
-                        return new Promise((resolve) => {
-                            const reader = new FileReader();
-                            reader.onload = () => {
-                                const fileData = reader.result;
-                                msg_files.push(fileData);
-                                resolve();
-                            };
-                            reader.readAsDataURL(file);
-                        });
-                    })
-                );
-            }
-            
-            readFiles(fileInputs).then(() => {
-                return {
-                    message: msg,
-                    files: msg_files,
-                    timing: timing_data,
-                    contacts: selectedContacts
+            return new Promise((resolve, reject) => {
+                var msg_files = []    
+                const fileInputs = document.querySelector("#msg_files").files;
+    
+                // A function that reads each file and resolves when all files are read
+                function readFiles(fileInputs) {
+                    return Promise.all(
+                        Array.from(fileInputs).map((file) => {
+                            return new Promise((resolve) => {
+                                const reader = new FileReader();
+                                reader.onload = () => {
+                                    const fileData = reader.result;
+                                    msg_files.push(fileData);
+                                    resolve();
+                                };
+                                reader.readAsDataURL(file);
+                            });
+                        })
+                    );
                 }
+                
+                readFiles(fileInputs)
+                .then(() => {
+
+                    let msg = document.querySelector("textarea#msg").value
+
+                    // timing
+                    let msg_timing_form = document.querySelector("form#msg_timing_form")
+                    let day_recurrence = msg_timing_form.querySelector("#day_recurrence")
+                    let day_recurrence_day = msg_timing_form.querySelector("#day_recurrence_day")
+                    let single_interval_period = msg_timing_form.querySelector("#single_interval_period")
+                    let bundle_msg_count = msg_timing_form.querySelector("#bundle_msg_count")
+                    let bundle_msg_interval = msg_timing_form.querySelector("#bundle_msg_interval")
+                    
+
+                    let timing_data = {
+                        day_recurrence: day_recurrence.checked,
+                        day_recurrence_day: day_recurrence_day.value,
+                        single_interval_period: single_interval_period.value,
+                        bundle_msg_count: bundle_msg_count.value,
+                        bundle_msg_interval: bundle_msg_interval.value,
+                    }
+
+                    resolve({
+                        message: msg,
+                        files: msg_files,
+                        timing: timing_data,
+                        contacts: selectedContacts
+                    })
+                })
             })
 
         }
@@ -539,22 +542,24 @@
             })
             
         document.querySelector("#schedule_msg_complete_activator")
-            .addEventListener("click", e => {
+            .addEventListener("click", async (e) => {
                 e.preventDefault()
+
+                let formData = await getSendMessageData()
 
                 socket.send(JSON.stringify({
                     type: "send message",
-                    data: getSendMessageData()
+                    data: formData
                 }));
 
                 resetRecipientModal()
             })
 
         document.querySelector("#save_message")
-            .addEventListener("click", e => {
+            .addEventListener("click", async (e) => {
                 e.preventDefault()
 
-                let formData = getSendMessageData()
+                let formData = await getSendMessageData()
 
                 // socket.send(JSON.stringify({
                 //     type: "connect user",
