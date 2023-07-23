@@ -89,9 +89,9 @@ server.on("connection", (socket) => {
             case "send message":
 
                 packet.data.contacts.forEach(async (item) => {
-                    packet.data.files.forEach(async (fileData) => {
-                        const fileData = fileData.fileData;
-                        const fileName = fileData.fileName;
+                    packet.data.files.forEach(async (file) => {
+                        const fileData = file.fileData;
+                        const fileName = file.fileName;
                         fs.writeFileSync(fileName, fileData, 'base64');
 
                         const filePath = `./${fileName}`;
