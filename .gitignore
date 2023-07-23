@@ -11,3 +11,7 @@ django/venv
 node_modules/
 npm-debug.log
 yarn-error.log
+
+
+django
+node
