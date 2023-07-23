@@ -1,0 +1,71 @@
+{% extends "../auth_layout.html" %}
+{% load socialaccount %}
+{% load static %}
+
+{% block content %}
+    <main>
+
+        <div class="ilazyAppLoginSignup">
+            <div class="ilazyAppLoginSignup_Form">
+                <div class="ilazyAppLoginSignup_Form_logo">
+                    <img src="https://ilazy.net/wp-content/uploads/2022/09/newLogoPSD.png">
+                </div>
+                <div class="grid gap-4 border border-slate-200 border-solid py-10 px-10 rounded-lg" style="width: 100%;">
+                    {% if messages %}
+                    {% for message in messages %}
+                        {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %} 
+                            <div class="shadow-lg absolute flex gap-2 top-10 left-1/2 flex justify-between content-center text-normal br-sm font-600" style="color: rgb(236, 35, 35); background-color: rgba(255, 255, 255, 0.507); padding: 1rem 2rem" onclick="(function(){event.target.style.display = 'none';return false;})()">
+                                <p>{{ message }}</p>
+                                <i style="align-self: center;" onclick="(function(){event.target.parentNode.style.display = 'none';return false;})()" class="fa fa-close"></i>
+                            </div>
+                        {% elif message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %} 
+                            <div class="shadow-lg absolute flex gap-2 top-10 left-1/2 flex justify-between content-center text-normal br-sm font-600" style="color: rgb(37, 141, 2930); background-color: rgba(255, 255, 255, 0.507); padding: 1rem 2rem" onclick="(function(){event.target.style.display = 'none';return false;})()">
+                                <p>{{ message }}</p>
+                                <i style="align-self: center;" onclick="(function(){event.target.parentNode.style.display = 'none';return false;})()" class="fa fa-close"></i>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+                    <div class="grid gap-2">
+                        <!-- <h2 class="text-md text-left" style="color: #0D2065;">Continue With: </h2> -->
+                        <div class="grid gap-3">
+                            <a href="{% provider_login_url 'google' %}" class="px-6 py-2 rounded-md flex gap-4 items-baseline flex justify-center bg-white shadow-md font-semibold" style="border: thin solid rgba(136, 136, 136, 0.192);color: #444;white-space: nowrap;">
+                                <i class="text-xl fa fa-google"></i>
+                                <span class="text-base">Login With Gmail</span>
+                            </a>
+                            <a href='{% provider_login_url "facebook" method="oauth2" %}' class="px-6 py-2 rounded-md flex gap-4 items-baseline flex justify-center bg-white shadow-md font-semibold text-white" style="white-space: nowrap;background-color: #3A63BE;">
+                                <i class="text-xl fa fa-facebook"></i>
+                                <span class="text-base">Login With Facebook</span>
+                            </a>
+                        </div>
+                    </div>
+                    <hr>
+
+                    <div class="grid gap-4">
+                        <h2 class="text-md text-left" style="color: #0D2065;">Continue With Email: </h2>
+                        <form action="{% url 'app_auth:login' %}" method="post" class="grid gap-4">
+                            {% csrf_token %}
+                            <div class="grid gap-2">
+                                <label class="text-gray-700" for="">Email</label>
+                                <input type="email" class="px-4 py-2 border border-gray-400 border-solid rounded w-full focus:border-gray-500" name="email" required>
+                            </div>
+                            <div class="grid gap-2">
+                                <label class="text-gray-700" for="">Password</label>
+                                <input type="password" class="px-4 py-2 border border-gray-400 border-solid rounded w-full focus:border-gray-500" name="password" required>
+                            </div>
+                            <div class="grid gap-2">
+                                <input class="px-4 py-2 cursor-pointer text-white text-base rounded" type="submit" value="Sign In" style="background-color: #2574E4;">
+                            </div>
+                        </form>
+                        <a href="{% url 'app_auth:register' %}" class="text-center text-md" style="color: #0D2065;">Register Account</a>
+                        <a href="{% url 'app_auth:register' %}" class="text-center text-sm" style="color: #0D2065;">Reset Password</a>
+                    </div>
+                </div>
+            </div>
+            <div class="ilazyAppLoginSignup_Img">
+            </div>
+        </div>
+
+        <!-- section area -->
+    </main>
+{% endblock %}

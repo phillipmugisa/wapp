@@ -1,0 +1,68 @@
+[
+  {
+    "name" : "Basic Monthly Package",
+    "status" : "ACTIVE",
+    "currency" : "USD",
+    "product" : "Whatsapp-Extension-Dev-1",
+    "cost" : "9.99",
+    "description" : "Basic Monthly Package subscription",
+    "interval_unit" : "MONTH",
+    "interval_count" : "1",
+    "has_trial": false
+  },
+  {
+    "name" : "Premium Monthly Package",
+    "status" : "ACTIVE",
+    "currency" : "USD",
+    "product" : "Whatsapp-Extension-Dev-1",
+    "cost" : "16.89",
+    "description" : "Premium Monthly Package subscription",
+    "interval_unit" : "MONTH",
+    "interval_count" : "1",
+    "has_trial": false
+  },
+  {
+    "name" : "Ultimate Monthly Package",
+    "status" : "ACTIVE",
+    "currency" : "USD",
+    "product" : "Whatsapp-Extension-Dev-1",
+    "cost" : "39.89",
+    "description" : "Ultimate Monthly Package subscription",
+    "interval_unit" : "MONTH",
+    "interval_count" : "1",
+    "has_trial": true
+  },
+  {
+    "name" : "Basic Semiannual Package",
+    "status" : "ACTIVE",
+    "currency" : "USD",
+    "product" : "Whatsapp-Extension-Dev-1",
+    "cost" : "7.50",
+    "description" : "Basic Semiannual Package subscription",
+    "interval_unit" : "MONTH",
+    "interval_count" : "1",
+    "has_trial": false
+  },
+  {
+    "name" : "Premium Semiannual Package",
+    "status" : "ACTIVE",
+    "currency" : "USD",
+    "product" : "Whatsapp-Extension-Dev-1",
+    "cost" : "12.68",
+    "description" : "Premium Semiannual Package subscription",
+    "interval_unit" : "MONTH",
+    "interval_count" : "1",
+    "has_trial": false
+  },
+  {
+    "name" : "Ultimate Semiannual Package",
+    "status" : "ACTIVE",
+    "currency" : "USD",
+    "product" : "Whatsapp-Extension-Dev-1",
+    "cost" : "29.92",
+    "description" : "Ultimate Semiannual Package subscription",
+    "interval_unit" : "MONTH",
+    "interval_count" : "1",
+    "has_trial": true
+  }
+]

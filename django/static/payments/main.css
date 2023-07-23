@@ -1,0 +1,65 @@
+.payment-area {
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    min-block-size: 100vh;
+    min-inline-size: 100vw;
+}
+
+.payment-methods {
+    border: 1px solid hsla(0, 16%, 94%, 0.3);
+    padding: 1rem 1rem;
+    border-radius: 10px;
+    min-inline-size: 30vw;
+    display: grid;
+    gap: 1rem;
+    background: hsla(0, 16%, 98%, 0.3);
+}
+.payment-methods .title {
+    display: grid;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+.payment-methods .methods {
+    background: hsla(0, 8%, 95%, 0.2);
+    padding: 1rem;
+    border-radius: 10px;
+    display: grid;
+    gap: .5rem;
+}
+.method-card {
+    background-color: white;
+    box-shadow: 1px 1px 1px 1px rgba(177, 172, 172, 0.3);
+    border-radius: 5px;
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-columns: .6fr 2fr .2fr;
+    align-items: center;
+    /* align-content: center; */
+    padding: 1rem 2rem;
+    gap: 1rem;
+}
+.method-card .method-icon {
+    font-size: 1.6rem;
+}
+.method-card svg {
+    width: 35px;
+    aspect-ratio: 1;
+}
+.method-card .selected {
+    color: hsl(0, 0%, 0%);
+    font-size: 1.2rem;
+    font-weight: normal;
+    display: none;
+}
+.method-card.selected .selected {
+    display: block;
+}
+
+.payment-methods .payment-activator {
+    padding: 1rem 1.5rem;
+    background-color: black;
+    color: white;
+    border-radius: 5px;
+}

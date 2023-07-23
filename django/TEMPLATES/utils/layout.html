@@ -1,0 +1,105 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Wapp Dashboard</title>
+        <meta name="description" content="">
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.css" >
+        
+        <link rel="stylesheet" href="{% static 'main.css' %}">
+        <link rel="stylesheet" href="{% static 'styles.css' %}">
+        <link rel="stylesheet" href="{% static 'tailcss.css' %}">
+        <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+    </head>
+<body>
+<main>
+  <section class="dashboard-area grid grid-flow-col grid-cols-dash items-stretch h-screen overflow-hidden">
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %} 
+                <div class="shadow-lg absolute flex gap-2 top-10 left-1/2 flex justify-between content-center text-normal br-sm font-600" style="color: rgb(236, 35, 35); background-color: rgba(255, 255, 255, 0.507); padding: 1rem 2rem" onclick="(function(){event.target.style.display = 'none';return false;})()">
+                    <p>{{ message }}</p>
+                    <i style="align-self: center;" onclick="(function(){event.target.parentNode.style.display = 'none';return false;})()" class="fa fa-close"></i>
+                </div>
+            {% elif message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %} 
+                <div class="shadow-lg absolute flex gap-2 top-10 left-1/2 flex justify-between content-center text-normal br-sm font-600" style="color: rgb(37, 141, 2930); background-color: rgba(255, 255, 255, 0.507); padding: 1rem 2rem" onclick="(function(){event.target.style.display = 'none';return false;})()">
+                    <p>{{ message }}</p>
+                    <i style="align-self: center;" onclick="(function(){event.target.parentNode.style.display = 'none';return false;})()" class="fa fa-close"></i>
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+    <nav class="grid gap-3 grid-flow-rows content-between bg-dark text-gray-200 py-5 px-4  shadow-xl">
+        <div class="upper grid gap-4">
+            <div class="company-logo py-2 px-4 border rounded-md border-none text-white text-center">
+                <h1 class="font-bold text-xl">Company</h1>
+            </div>
+            <hr>
+            <ul class="grid gap-2">
+                <li class="nav-tabs">
+                    <a href="{% url 'manager:home' %}" class="grid grid-flow-col items-center justify-start gap-4 active">
+                        <i class="fa fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-tabs">
+                    <a href="{% url 'manager:account' %}" class="grid grid-flow-col items-center justify-start gap-4">
+                        <i class="fa fa-user"></i>
+                        <span>Account</span>
+                    </a>
+                </li>
+                <li class="nav-tabs">
+                    <a href="{% url 'manager:pricings' %}" class="grid grid-flow-col items-center justify-start gap-4">
+                        <i class="fa fa-cog"></i>
+                        <span>Pricings</span>
+                    </a>
+                </li>
+                <li class="nav-tabs">
+                    <a href="{% url 'manager:whatsapp-view' %}" class="grid grid-flow-col items-center justify-start gap-4">
+                        <i class="fa fa-cog"></i>
+                        <span>Whatsapp</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="lower grid justify-stretch gap-2">
+            <hr>
+            <a href="{% url 'app_auth:logout' %}" class="self-end nav-tabs auth grid justify-center" style="align-self: flex-end;">
+                Logout
+            </a>
+        </div>
+    </nav>
+    <section class="grid content-start">
+        <ul class="bg-white shadow-md px-4 py-2 grid grid-flow-col items-center justify-between self-start gap-4">
+            <div class="grid grid-flow-col gap-2 items-center">
+                <a href="{% url 'manager:account' %}" class="px-6 py-2 bg-teal-800 hover:bg-teal-700 transition-all text-white font-semibold">
+                    {{ user_subsciption.plan.name }}
+                </a>
+                <h3 class="text-lg font-semibold text-accent">{{ page_msg }}</h3>
+            </div>
+            <div class="grid grid-flow-col gap-4 items-center">
+                <li>
+                    <a href="">
+                        <i class="fa fa-bell"></i>
+                    </a>
+                </li>
+                <a href="{% url 'manager:account' %}" class="nav-group grid grid-flow-col items-center gap-2 rounded-lg bg-gray-100 py-1 px-3">
+                    <span>{{ request.user.username }}</span>
+                    <li class="avator">
+                        <img src="{% if social_user %}{{social_user.get_avatar_url}}{% else %}/media/{{request.user.profile_image}}{% endif %}" alt="">
+                    </li>
+                </a>
+            </div>
+        </ul>
+        <section class="grid p-4 items-start overflow-y-auto" style="block-size: 90vh;;">
+          {% block content %}
+          {% endblock %}
+        </section>
+    </section>
+</section>
+</main>
+  
+</body>
+</script>
+</html>

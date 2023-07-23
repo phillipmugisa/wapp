@@ -1,0 +1,104 @@
+import { WebSocketServer } from "ws";
+import pkg from 'whatsapp-web.js';
+const { Client, LocalAuth, MessageMedia } = pkg;
+import fs from 'fs'
+
+const server = new WebSocketServer({ port: 3000 });
+let client;
+let myContacts;
+
+
+server.on("connection", (socket) => {
+    // send a message to the client
+    console.log("New Connection Made")
+    socket.on("message", (data) => {
+        const packet = JSON.parse(data);
+        switch (packet.type) {
+            case "connect user":
+                client = new Client({
+                    authStrategy: new LocalAuth({ clientId: packet.username }),
+                    puppeteer: {
+                        args: ['--no-sandbox'],
+                    }
+                })
+                client.on('qr', (qr) => {
+                    socket.send(JSON.stringify({
+                        type: "qr-code generated",
+                        qrCode: qr
+                    }));
+                });
+            
+                client.on('ready', async () => {
+                    socket.send(JSON.stringify({
+                        type: "account connected",
+                    }));
+                });
+            
+                client.on('message', async (message) => {
+                    if (!message.isStatus) {
+                        const contact = await message.getContact()
+                        socket.send(JSON.stringify({
+                            type: "new-message",
+                            message: message,
+                            contact: contact.name
+                        }));
+                    }
+                    else {
+                        // statuses
+                    }
+                });
+
+                client.on('authenticated', async (session) => {    
+                    // Save the session object however you prefer.
+                    // Convert it to json, save it to a file, store it in a database...
+                    socket.send(JSON.stringify({
+                        type: "authenticated",
+                    }))
+                });                
+                
+                client.initialize();
+                break;
+            case "contacts":
+                try {
+                    let contacts_list = []
+                    client.getContacts()
+                    .then(contacts => {
+                        myContacts = contacts
+                        contacts.forEach(contact => {
+                            if (contact.name != "...." && contact.id.server != "lid") {
+                                let ct = {
+                                    id: contact.id,
+                                    name: contact.name,
+                                    number: contact.id.user,
+                                    isGroup: contact.isGroup,
+                                    isBusiness: contact.isBusiness,
+                                }
+                                contacts_list.push(ct)
+                            }
+                        });
+                        
+                        socket.send(JSON.stringify({
+                            type: "contact list",
+                            contacts: contacts_list
+                        }));
+                    })
+                }
+                catch (err) {
+                }
+                break;
+            case "send message":
+                console.log(packet.data)
+
+                packet.data.contacts.forEach(item => {
+                    // packet.data.data.files.forEach(media => {
+
+                    //     const media = new MessageMedia.fromBase64(media);
+                    // })
+                    // await client.sendMessage('RECIPIENT_PHONE_NUMBER', media, { caption: 'Check out this image!' });
+                    client.sendMessage(item._serialized, packet.data.data.message);
+                })
+                break;
+        }
+    });
+
+});

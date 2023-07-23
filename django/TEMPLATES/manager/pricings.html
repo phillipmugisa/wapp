@@ -1,0 +1,50 @@
+{% extends '../utils/layout.html' %}
+{% block content %}
+
+<div class="grid grid-cols-1 gap-2 md:grid-cols-3 items-start">
+    {% for pricing in pricings %}
+        <div class="{% if pricing.name == 'Master Package' %} border-2 border-blue-400 {% elif pricing.name == 'Pro Package' %} border-2 border-yellow-400 {% else %} border border-gray-300 {% endif %} p-3 border-solid rounded-lg" >
+            <div class="flex justify-between items-center p-3">
+                <h3 class="text-xl">{{ pricing.name }}</h3>
+                <span class="flex items-baseline gap-1">
+                    <h3 class="text-xl">$</h3>
+                    <h2 class="text-4xl">{{ pricing.cost }}</h2>
+                </span>
+            </div>
+            <ul class="grid gap-2 list-none list-outside text-gray-700 px-5 py-2">
+
+                {% for feature in features %}
+                    {% if pricing in feature.plan.all %}
+                        <li class="flex gap-3 justify-between">
+                            <span>{{ feature.name }}</span>
+                            <span>
+                                <i class="fa fa-check"></i>
+                            </span>
+                        </li>
+                    {% else %}
+                        <li class="flex gap-3 justify-between">
+                            <span>{{ feature.name }}</span>
+                            <span>
+                                <i class="fa fa-close"></i>
+                            </span>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+            {% if pricing.cost != 0.00 %}
+                <form action="{% url 'payments:paypalpayments' %}?upgrade={% if package.id == user_package.package_id.id %}true{% else %}false{% endif %}" method="post" class="grid gap-4 px-5 py-2">
+                    {% csrf_token %}
+                    <input type="hidden" value="{{ pricing.paypal_id }}" name="pricing_paypal_id">
+                    {% if pricing.id != user_subsciption.plan.id %}
+                        <div class="grid gap-2">
+                            <input class="px-4 py-2 bg-black cursor-pointer hover:bg-gray-900 text-white text-base rounded" type="submit" value="{% if pricing.id == user_subsciption.plan.id and pricing.id != user_subsciption.plan.id %} Upgrade {% else %} Purchase {% endif %}">
+                        </div>
+                    {% endif %}
+                </form>
+            {% endif %}
+        </div>
+    {% endfor %}
+
+</div>
+
+{% endblock %}

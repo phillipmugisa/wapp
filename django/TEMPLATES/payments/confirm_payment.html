@@ -1,0 +1,41 @@
+{% extends '../utils/layout.html' %}
+{% block content %}
+<section class="flex gap-2 flex-col p-10 w-10/12 mx-auto">
+    <div class="flex justify-between py-3">
+        <h3 class="text-2xl text-grey-800">Payment Details</h3>
+    </div>
+    <hr>
+    <div class="grid gap-1">
+        <span class="flex gap-2 items-center">
+            <p>Package Name: </p>
+            <p class="capitalize text-lg">{{package.name}}</p>
+        </span>
+        <span class="flex gap-2 items-center">
+            <p>Pricing Name: </p>
+            <p class="capitalize text-lg">{{pricing.name}}</p>
+        </span>
+        <span class="flex gap-2 items-center">
+            <p>Payment Duration: </p>
+            <p class="capitalize text-lg">{{subscription_duration}}</p>
+        </span>
+        <span class="flex gap-2 items-center">
+            <p>Total Price: </p>
+            <p class="text-lg">USD {{total_price}}</p>
+        </span>
+    </div>
+    <!-- <div class="flex justify-center p-3" id="paypal-button-container"></div> -->
+    <hr>
+    <div class="flex gap-3">
+        <form action="{% url 'manager:complete-payment' %}" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="package_id" value="{{ package.id }}">
+            <input type="hidden" name="pricing_id" value="{{ pricing.id }}">
+            <input type="hidden" name="total_price" value="{{ total_price }}">
+            <input type="hidden" name="payment_duration" value="{{ subscription_duration }}">
+            <input type="submit" class="px-6 py-2 cursor-pointer text-center text-blue-900 font-bold text-base rounded my-5" style="background-color: #FFC439;" value="Pay with Paypal" />
+        </form>
+
+        <a href="{% url 'manager:dashboard' %}" class="px-6 py-2 cursor-pointer text-gray-800 bg-white text-base rounded border border-gray-800 border-solid my-5">Cancel</a>
+    </div>
+</section>
+{% endblock %}

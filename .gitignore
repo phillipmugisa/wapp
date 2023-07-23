@@ -1,0 +1,13 @@
+# Django
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.sqlite3
+*.pyc
+django/venv
+
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
