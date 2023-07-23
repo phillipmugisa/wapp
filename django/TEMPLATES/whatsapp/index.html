@@ -194,8 +194,8 @@
         var selectedContacts = []
 
         document.querySelector("#scan-qr").classList.remove("hidden")
-        let domain = window.location.href.includes("localhost") ? "localhost" : "129.151.163.59"
-        const socket = new WebSocket(`ws://${domain}:3000`);
+        // let domain = window.location.href.includes("localhost") ? "localhost" : "129.151.163.59"
+        const socket = new WebSocket(`ws://localhost/ws/`);
     
         socket.addEventListener("open", () => {
             // send a message to the server
