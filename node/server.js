@@ -87,15 +87,25 @@ server.on("connection", (socket) => {
                 }
                 break;
             case "send message":
-                console.log(packet.data)
 
-                packet.data.contacts.forEach(item => {
-                    // packet.data.data.files.forEach(media => {
+                packet.data.contacts.forEach(async (item) => {
+                    packet.data.files.forEach(async (media) => {
 
-                    //     const media = new MessageMedia.fromBase64(media);
-                    // })
-                    // await client.sendMessage('RECIPIENT_PHONE_NUMBER', media, { caption: 'Check out this image!' });
-                    client.sendMessage(item._serialized, packet.data.message);
+                        const media = new MessageMedia.fromBase64(media);
+                        if (packet.data.files.length == 1) {
+                            await client.sendMessage(item._serialized, media, { caption: packet.data.message });
+                            socket.send(JSON.stringify({
+                                type: "message sent",
+                            }));
+                        }
+                    })
+                    if (packet.data.files.length != 1) {
+                        await client.sendMessage(item._serialized, packet.data.message);
+                        
+                        socket.send(JSON.stringify({
+                            type: "message sent",
+                        }));
+                    }
                 })
                 break;
         }
