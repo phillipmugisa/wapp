@@ -60,7 +60,7 @@
             </div>
         </div>
     </div>
-    <div id="scan-qr" class="grid gap-2 absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 h-full w-full rounded hidden">
+    <div id="scan-qr" class="grid gap-2 absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 h-full w-full rounded">
         <div class="bg-white p-3 rounded shadow-lg grid gap-2 justify-stretch" style="grid-template-rows: .25fr 2fr .5fr;background-color: #b8ffe8;">
             <header class="p-2">
                 <h3 class="font-semibold text-lg text-center text-green-600">Scan Code to Connect Whatspp</h3>
@@ -193,7 +193,7 @@
         }
         var selectedContacts = []
 
-        document.querySelector("#scan-qr").classList.remove("hidden")
+        // document.querySelector("#scan-qr").classList.remove("hidden")
         // let domain = window.location.href.includes("localhost") ? "localhost" : "129.151.163.59"
         const socket = new WebSocket(`ws://129.151.163.59/ws/`);
     
@@ -483,14 +483,19 @@
 
         function getSendMessageData() {
             let msg = document.querySelector("textarea#msg").value
-            let files = []
+            var msg_files = []
             Array.from(document.querySelector("#msg_files").files).forEach(file => {
                 console.log(file)
                 const reader = new FileReader();
 
                 reader.onload = (event) => {
                     console.log(event)
-                    files.push(event.target.result.split(',')[1])
+                    msg_files.push(event.target.result.split(',')[1])
+                };
+
+                reader.onload = () => {
+                    const fileData = reader.result;
+                    msg_files.push(fileData)
                 };
 
                 reader.readAsDataURL(file);
@@ -515,7 +520,7 @@
             return {
                 data: {
                     message: msg,
-                    files: files
+                    files: msg_files
                 },
                 timing: timing_data,
                 contacts: selectedContacts
