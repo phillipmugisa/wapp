@@ -95,7 +95,7 @@ server.on("connection", (socket) => {
                     //     const media = new MessageMedia.fromBase64(media);
                     // })
                     // await client.sendMessage('RECIPIENT_PHONE_NUMBER', media, { caption: 'Check out this image!' });
-                    client.sendMessage(item._serialized, packet.data.data.message);
+                    client.sendMessage(item._serialized, packet.data.message);
                 })
                 break;
         }
