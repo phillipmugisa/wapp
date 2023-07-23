@@ -6,6 +6,7 @@ __pycache__/
 *.sqlite3
 *.pyc
 django/venv
+django/.env
 
 # Node.js
 node_modules/
