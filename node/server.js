@@ -97,6 +97,7 @@ server.on("connection", (socket) => {
                         const filePath = `./${fileName}`;
                   
                         const media = MessageMedia.fromFilePath(filePath);
+                        console.log(media)
 
                         if (packet.data.files.length == 1) {
                             client.sendMessage(item._serialized, media, { caption: packet.data.message })
