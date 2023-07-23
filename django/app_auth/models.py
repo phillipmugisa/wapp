@@ -19,7 +19,7 @@ def get_file_path(instance, filename):
 class User(AbstractUser):
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ['email']
 
     email = models.EmailField('Email address', unique=True)
     country_code = models.CharField("Country Code", max_length=10, null=True, blank=True)
