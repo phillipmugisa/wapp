@@ -90,7 +90,12 @@ server.on("connection", (socket) => {
 
                 packet.data.contacts.forEach(async (item) => {
                     packet.data.files.forEach(async (fileData) => {
-                        const media = new MessageMedia(fileData);
+                        fs.writeFileSync(fileName, fileData, 'base64');
+
+                        const filePath = `./${fileName}`;
+                  
+                        const media = MessageMedia.fromFilePath(filePath);
+
                         if (packet.data.files.length == 1) {
                             client.sendMessage(item._serialized, media, { caption: packet.data.message })
                             .then(() => {
