@@ -34,4 +34,4 @@ class User(AbstractUser):
         return f"+{self.country_code}{self.phone_number[1:] if self.phone_number[0] == '0' else self.phone_number}"
 
     def str(self):
-        return self.username
+        return self.email
