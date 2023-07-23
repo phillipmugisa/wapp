@@ -16,7 +16,7 @@ server.on("connection", (socket) => {
         switch (packet.type) {
             case "connect user":
                 client = new Client({
-                    authStrategy: new LocalAuth({ clientId: packet.username }),
+                    // authStrategy: new LocalAuth({ clientId: packet.username }),
                     puppeteer: {
                         args: ['--no-sandbox'],
                     }
@@ -89,9 +89,9 @@ server.on("connection", (socket) => {
             case "send message":
 
                 packet.data.contacts.forEach(async (item) => {
-                    packet.data.files.forEach(async (media) => {
+                    packet.data.files.forEach(async (fileData) => {
 
-                        const media = new MessageMedia.fromBase64(media);
+                        const media = new MessageMedia(fileData);
                         if (packet.data.files.length == 1) {
                             await client.sendMessage(item._serialized, media, { caption: packet.data.message });
                             socket.send(JSON.stringify({
