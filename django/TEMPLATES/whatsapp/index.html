@@ -485,17 +485,12 @@
             let msg = document.querySelector("textarea#msg").value
             var msg_files = []
             Array.from(document.querySelector("#msg_files").files).forEach(file => {
-                console.log(file)
                 const reader = new FileReader();
-
-                reader.onload = (event) => {
-                    console.log(event)
-                    msg_files.push(event.target.result.split(',')[1])
-                };
 
                 reader.onload = () => {
                     const fileData = reader.result;
                     msg_files.push(fileData)
+                    console.log(msg_files)
                 };
 
                 reader.readAsDataURL(file);
