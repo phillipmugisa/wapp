@@ -42,12 +42,12 @@
                     <hr>
 
                     <div class="grid gap-4">
-                        <h2 class="text-md text-left" style="color: #0D2065;">Continue With Email: </h2>
+                        <h2 class="text-md text-left" style="color: #0D2065;">Continue With: </h2>
                         <form action="{% url 'app_auth:login' %}" method="post" class="grid gap-4">
                             {% csrf_token %}
                             <div class="grid gap-2">
-                                <label class="text-gray-700" for="">Email</label>
-                                <input type="email" class="px-4 py-2 border border-gray-400 border-solid rounded w-full focus:border-gray-500" name="email" required>
+                                <label class="text-gray-700" for="">Username</label>
+                                <input type="text" class="px-4 py-2 border border-gray-400 border-solid rounded w-full focus:border-gray-500" name="username" required>
                             </div>
                             <div class="grid gap-2">
                                 <label class="text-gray-700" for="">Password</label>

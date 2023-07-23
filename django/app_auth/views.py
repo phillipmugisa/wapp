@@ -35,9 +35,9 @@ class loginUserView(View):
         return render(request, self.template_name)
 
     def post(self, request, *args, **kwargs):
-        email = request.POST.get("email", "")
+        username = request.POST.get("username", "")
         password = request.POST.get("password", "")
-        user = auth.authenticate(email=email, password=password)
+        user = auth.authenticate(username=username, password=password)
 
         if user is not None:
             # if not user.is_phone_activated and not user.is_email_activated:
