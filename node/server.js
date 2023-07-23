@@ -89,7 +89,7 @@ server.on("connection", (socket) => {
             case "send message":
 
                 packet.data.contacts.forEach(async (item) => {
-                    packet.data.files.forEach(async (file) => {
+                    for (const file of packet.data.files) {
                         const fileData = file.fileData;
                         const fileName = file.fileName;
                         fs.writeFileSync(fileName, fileData, 'base64');
@@ -127,7 +127,7 @@ server.on("connection", (socket) => {
                                 fs.unlinkSync(filePath);
                             })
                         }
-                    })
+                    }
                     if (packet.data.files.length != 1) {
                         await client.sendMessage(item._serialized, packet.data.message);
                         
