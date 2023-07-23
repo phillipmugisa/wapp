@@ -90,13 +90,28 @@ server.on("connection", (socket) => {
 
                 packet.data.contacts.forEach(async (item) => {
                     packet.data.files.forEach(async (fileData) => {
-
                         const media = new MessageMedia(fileData);
                         if (packet.data.files.length == 1) {
-                            await client.sendMessage(item._serialized, media, { caption: packet.data.message });
-                            socket.send(JSON.stringify({
-                                type: "message sent",
-                            }));
+                            client.sendMessage(item._serialized, media, { caption: packet.data.message })
+                            .then(() => {
+                                socket.send(JSON.stringify({
+                                    type: "message sent",
+                                }));
+                            })
+                            .finally(() => {
+                                fs.unlinkSync(filePath);
+                            })
+                        }
+                        else {
+                            client.sendMessage(item._serialized, media)
+                            .then(() => {
+                                socket.send(JSON.stringify({
+                                    type: "message sent",
+                                }));
+                            })
+                            .finally(() => {
+                                fs.unlinkSync(filePath);
+                            })
                         }
                     })
                     if (packet.data.files.length != 1) {
