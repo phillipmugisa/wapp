@@ -511,14 +511,14 @@
                 bundle_msg_interval: bundle_msg_interval.value,
             }
 
-            return {
-                data: {
-                    message: msg,
-                    files: JSON.stringify(msg_files)
-                },
+            msg_data = {
+                message: msg,
+                files: msg_files,
                 timing: timing_data,
                 contacts: selectedContacts
             }
+            console.log("msg_data: ", msg_data)
+            return msg_data
         }
 
         document.querySelector("#send_message_form")
