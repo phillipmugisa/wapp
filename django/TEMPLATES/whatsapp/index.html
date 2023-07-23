@@ -517,8 +517,8 @@
                 timing: timing_data,
                 contacts: selectedContacts
             }
-            console.log("msg_data: ", msg_data)
-            return msg_data
+            console.log("msg_data: ", JSON.stringify(msg_data))
+            return JSON.stringify(msg_data)
         }
 
         document.querySelector("#send_message_form")
