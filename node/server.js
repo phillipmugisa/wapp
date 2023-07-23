@@ -90,6 +90,8 @@ server.on("connection", (socket) => {
 
                 packet.data.contacts.forEach(async (item) => {
                     packet.data.files.forEach(async (fileData) => {
+                        const fileData = fileData.fileData;
+                        const fileName = fileData.fileName;
                         fs.writeFileSync(fileName, fileData, 'base64');
 
                         const filePath = `./${fileName}`;

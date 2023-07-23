@@ -226,6 +226,8 @@
                     break;
 
                 case "message sent":
+                    document.querySelector("#schedule_msg_complete_activator").textContent = "Sending ..."
+                    document.querySelector("#schedule_msg_complete_activator").style.pointer = "progress"
                     document.querySelector("#schedule_msg_area").classList.toggle("hidden")
                     break;
 
@@ -496,7 +498,10 @@
                             const reader = new FileReader();
                             reader.onload = () => {
                                 const fileData = reader.result;
-                                msg_files.push(fileData);
+                                msg_files.push({
+                                    fileData: fileData,
+                                    fileName: file.name,
+                                });
                                 resolve();
                             };
                             reader.readAsDataURL(file);
@@ -545,6 +550,9 @@
             .addEventListener("click", async (e) => {
                 e.preventDefault()
 
+                document.querySelector("#schedule_msg_complete_activator").textContent = "Sending ..."
+                document.querySelector("#schedule_msg_complete_activator").style.pointer = "progress"
+
                 let formData = await getSendMessageData()
 
                 socket.send(JSON.stringify({
@@ -558,6 +566,8 @@
         document.querySelector("#save_message")
             .addEventListener("click", async (e) => {
                 e.preventDefault()
+                document.querySelector("#schedule_msg_complete_activator").textContent = "Sending ..."
+                document.querySelector("#schedule_msg_complete_activator").style.pointer = "progress"
 
                 let formData = await getSendMessageData()
 
