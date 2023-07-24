@@ -226,6 +226,8 @@
                     break;
 
                 case "message sent":
+                    selectedContacts = []
+                    document.querySelector("textarea#msg").value = ""
                     document.querySelector("#schedule_msg_complete_activator").textContent = "Send"
                     document.querySelector("#schedule_msg_complete_activator").style.pointer = "progress"
                     document.querySelector("#schedule_msg_area").classList.toggle("hidden")
