@@ -1,3 +1,4 @@
-2023/07/21-13:31:05.714 2c94 Reusing MANIFEST C:\Users\HP\Desktop\work\wapp\node\.wwebjs_auth\session-admin\Default\File System\Origins/MANIFEST-000001
-2023/07/21-13:31:05.714 2c94 Recovering log #6
-2023/07/21-13:31:05.715 2c94 Reusing old log C:\Users\HP\Desktop\work\wapp\node\.wwebjs_auth\session-admin\Default\File System\Origins/000006.log 
+2023/07/27-12:56:06.583 27bc Creating DB C:\Users\HP\Desktop\work\wapp\node\.wwebjs_auth\session-admin\Default\File System\Origins since it was missing.
+2023/07/27-12:56:06.603 27bc Reusing MANIFEST C:\Users\HP\Desktop\work\wapp\node\.wwebjs_auth\session-admin\Default\File System\Origins/MANIFEST-000001
+2023/07/27-12:56:06.603 27bc Recovering log #6
+2023/07/27-12:56:06.604 27bc Reusing old log C:\Users\HP\Desktop\work\wapp\node\.wwebjs_auth\session-admin\Default\File System\Origins/000006.log 

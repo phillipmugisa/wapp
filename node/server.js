@@ -16,12 +16,13 @@ server.on("connection", (socket) => {
         switch (packet.type) {
             case "connect user":
                 client = new Client({
-                    // authStrategy: new LocalAuth({ clientId: packet.username }),
+                    authStrategy: new LocalAuth({ clientId: packet.username }),
                     puppeteer: {
                         args: ['--no-sandbox'],
                     }
                 })
                 client.on('qr', (qr) => {
+                    console.log("qr generated")
                     socket.send(JSON.stringify({
                         type: "qr-code generated",
                         qrCode: qr
@@ -29,6 +30,7 @@ server.on("connection", (socket) => {
                 });
             
                 client.on('ready', async () => {
+                    console.log("client ready")
                     socket.send(JSON.stringify({
                         type: "account connected",
                     }));
@@ -88,11 +90,15 @@ server.on("connection", (socket) => {
                 break;
             case "send message":
 
-                packet.data.contacts.forEach(async (item) => {
+                for (let item of packet.data.contacts) {
                     for (const file of packet.data.files) {
                         const fileData = file.fileData;
                         const fileName = file.fileName;
-                        fs.writeFileSync(fileName, fileData, 'base64');
+
+                        const data = fileData.replace(/^data:image\/\w+;base64,/, '');
+                        const buffer = Buffer.from(data, 'base64');
+
+                        fs.writeFileSync(fileName, buffer, {encoding: 'base64'});
 
                         const filePath = `./${fileName}`;
                   
@@ -128,13 +134,16 @@ server.on("connection", (socket) => {
                         }
                     }
                     if (packet.data.files.length != 1) {
-                        await client.sendMessage(item._serialized, packet.data.message);
+                        console.log("message: ", item._serialized, packet.data.message)
+                        client.sendMessage(item._serialized, packet.data.message)
+                        .then(() => {
+                            socket.send(JSON.stringify({
+                                type: "message sent",
+                            }));
+                        })
                         
-                        socket.send(JSON.stringify({
-                            type: "message sent",
-                        }));
                     }
-                })
+                }
                 break;
         }
     });

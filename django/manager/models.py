@@ -12,83 +12,37 @@ def get_file_path(instance, filename):
     filename = f"{instance.slug}-{uuid.uuid4()}"[:50] + f".{ext}"
     return os.path.join(f"{instance.__class__.__name__}/images/", filename)
 
-
-# id: Math.random() * 50,
-# name: template_name,
-# color: template_color,
-# message: template_extension_message,
-# date_created: `${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`,
-class Template(models.Model):
-    user = models.ForeignKey(to=AuthModels.User, on_delete=models.CASCADE, blank=True, null=True)
-    name = models.CharField(_("Name"), max_length=256, blank=True, null=True)
-    template_id = models.CharField(_("template_id"), max_length=256, blank=True, null=True)
-    color = models.CharField(_("Color"), max_length=256, blank=True, null=True)
-    message = models.TextField(_("message"))
-    date_created = models.CharField(_("date_created"), max_length=256, blank=True, null=True)
-
-    def __str__(self) -> str:
-        return f"{self.name}"
-
-# _task["inEdit"] = True;
-# _task["name"] = msg_name;
-# _task["contact"] = selected_contact;
-# _task["color"] = msg_color;
-# _task["template"] = saved_template;
-# _task["sending_date"] = schedule_date;
-# _task["sending_time"] = schedule_time;
-# _task["date_created"] = `${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`;
-
+def generate_schedule_datetime(schedule_date, schedule_time):
+    # Assuming schedule_date and schedule_time are in the format "YYYY-MM-DD" and "HH:MM" respectively
+    date_format = "%Y-%m-%d %H:%M"
+    schedule_datetime_str = f"{schedule_date} {schedule_time}"
+    schedule_datetime = datetime.datetime.strptime(schedule_datetime_str, date_format)
+    return schedule_datetime
 
 class Task(models.Model):
     user = models.ForeignKey(to=AuthModels.User, on_delete=models.CASCADE, blank=True, null=True)
-    name = models.CharField(_("Name"), max_length=256, blank=True, null=True)
-    color = models.CharField(_("Color"), max_length=256, blank=True, null=True)
-    contact = models.CharField(_("contact"), max_length=256, blank=True, null=True)
-    template = models.CharField(_("template_id"), max_length=256, blank=True, null=True)
+    data = models.JSONField(_("message data"))
+    # day_recurrence = models.CharField(_("day_recurrence"), max_length=256, blank=True, null=True)
+    # day_recurrence_day = models.CharField(_("day_recurrence_day"), max_length=256, blank=True, null=True)
+    # single_interval_period = models.CharField(_("single_interval_period"), max_length=256, blank=True, null=True)
+    # bundle_msg_count = models.CharField(_("bundle_msg_count"), max_length=256, blank=True, null=True)
+    # bundle_msg_interval = models.CharField(_("bundle_msg_interval"), max_length=256, blank=True, null=True)
+    # schedule_time = models.CharField(_("schedule_time"), max_length=256, blank=True, null=True)
+    # schedule_date = models.CharField(_("schedule_date"), max_length=256, blank=True, null=True)
+    # message = models.CharField(_("message"), max_length=256, blank=True, null=True)
+    # files
+    # contacts
 
-    sending_date = models.CharField(_("sending_date"), max_length=256, blank=True, null=True)
-    sending_time = models.CharField(_("sending_time"), max_length=256, blank=True, null=True)
+    schedule_date = models.DateTimeField(_("Schedule Date"), null=True, blank=True)
 
-    date_created = models.CharField(_("date_created"), max_length=256, blank=True, null=True)
+    
 
-    def __str__(self) -> str:
-        return f"{self.name}"
+    def save(self, *args, **kwargs):
+        if self.data["timing"]["schedule_date"] and self.data["timing"]["schedule_time"]:
+            schedule_datetime = generate_schedule_datetime(self.data["timing"]["schedule_date"], self.data["timing"]["schedule_time"])
+            self.schedule_date = schedule_datetime
 
-# id: Math.random() * 50,
-# name: memo_name,
-# description: memo_description,
-# color: memo_color,
-# date_created: `${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`,
-
-class Memo(models.Model):
-    user = models.ForeignKey(to=AuthModels.User, on_delete=models.CASCADE, blank=True, null=True)
-    name = models.CharField(_("Name"), max_length=256, blank=True, null=True)
-    color = models.CharField(_("Color"), max_length=256, blank=True, null=True)
-    description = models.TextField(_("description"))
-    date_created = models.CharField(_("date_created"), max_length=256, blank=True, null=True)
+        super().save(*args, **kwargs)
 
     def __str__(self) -> str:
-        return f"{self.name}"
-
-class Alarm(models.Model):
-    user = models.ForeignKey(to=AuthModels.User, on_delete=models.CASCADE, blank=True, null=True)
-    name = models.CharField(_("Name"), max_length=256, blank=True, null=True)
-    color = models.CharField(_("Color"), max_length=256, blank=True, null=True)
-    display_area = models.CharField(_("Display Area"), max_length=256, blank=True, null=True)
-    template = models.CharField(_("template_id"), max_length=256, blank=True, null=True)
-
-    alarm_date = models.CharField(_("alarm_date"), max_length=256, blank=True, null=True)
-    alarm_time = models.CharField(_("alarm_time"), max_length=256, blank=True, null=True)
-
-    date_created = models.CharField(_("date_created"), max_length=256, blank=True, null=True)
-
-    def __str__(self) -> str:
-        return f"{self.name}"
-
-class BlockedSite(models.Model):
-    user = models.ForeignKey(to=AuthModels.User, on_delete=models.CASCADE, blank=True, null=True)
-    url = models.CharField(_("url"), max_length=256, blank=True, null=True)
-    date_created = models.CharField(_("date_created"), max_length=256, blank=True, null=True)
-
-    def __str__(self) -> str:
-        return f"{self.url}"
+        return f"{self.user}"

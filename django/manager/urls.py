@@ -8,4 +8,5 @@ urlpatterns = [
     path("pricings/", ManagerViews.PricingView.as_view(), name="pricings"),
     path("account/", ManagerViews.AccountView.as_view(), name="account"),
     path("whatsapp/", ManagerViews.WhatsappView.as_view(), name="whatsapp-view"),
+    path("whatsapp/schedule/", ManagerViews.WhatsappSchedulerView, name="whatsapp-scheduler"),
 ]

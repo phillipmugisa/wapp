@@ -1,8 +1,11 @@
 from django.shortcuts import render, redirect
+from django.http import JsonResponse
 from django.urls import reverse
 from django.views import View
+from django.views.decorators.csrf import csrf_exempt
 from manager import models as ManagerModels
 from payments import models as PaymentModels
+import json
 
 
 def get_social_user(request):
@@ -30,16 +33,6 @@ class HomePageView(View):
             
             return render(request, template_name=self.template_name, context=context_data)
         return redirect(reverse("app_auth:login"))
-
-class SavedDataView(View):
-    template_name = "manager/saved_data.html"
-    def get(self, request, *args, **kwargs):
-
-        context_data = {
-            "calculator" : "calculator",
-            "records" : 'records'
-        }
-        return render(request, template_name=self.template_name, context=context_data)
 
 class PricingView(View):
     template_name = "manager/pricings.html"
@@ -81,3 +74,24 @@ class WhatsappView(View):
             
             return render(request, template_name=self.template_name, context=context_data)
         return redirect(reverse("app_auth:login"))
+
+
+@csrf_exempt
+def WhatsappSchedulerView(request):
+    if request.method == "POST":
+        if not request.user.is_authenticated:
+            return JsonResponse({'status': 'error', 'message': 'Request Forbidden'})
+
+        data = json.loads(request.body)
+        task = ManagerModels.Task.objects.create(data=data, user=request.user)
+        return JsonResponse({'status': 'success', 'message': 'Message Scheduled', "data": data})
+    elif request.method == "GET":
+        if not request.user.is_authenticated:
+            return JsonResponse({'status': 'error', 'message': 'Request Forbidden'})
+
+        data = []
+        tasks = ManagerModels.Task.objects.filter(user=request.user)
+        for task in tasks:
+            data.append(task.data)
+        
+        return JsonResponse({'status': 'success', "data": data})

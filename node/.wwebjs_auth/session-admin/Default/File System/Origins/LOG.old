@@ -1,4 +1,4 @@
-2023/07/21-13:23:43.343 5b0 Creating DB C:\Users\HP\Desktop\work\wapp\node\.wwebjs_auth\session-admin\Default\File System\Origins since it was missing.
-2023/07/21-13:23:43.359 5b0 Reusing MANIFEST C:\Users\HP\Desktop\work\wapp\node\.wwebjs_auth\session-admin\Default\File System\Origins/MANIFEST-000001
-2023/07/21-13:23:43.360 5b0 Recovering log #6
-2023/07/21-13:23:43.360 5b0 Reusing old log C:\Users\HP\Desktop\work\wapp\node\.wwebjs_auth\session-admin\Default\File System\Origins/000006.log 
+2023/07/27-12:53:10.302 3b28 Log #6: 3 ops saved to Table #7 OK
+2023/07/27-12:53:11.308 3b28 Archiving C:\Users\HP\Desktop\work\wapp\node\.wwebjs_auth\session-admin\Default\File System\Origins/000006.log: IO error: C:\Users\HP\Desktop\work\wapp\node\.wwebjs_auth\session-admin\Default\File System\Origins/000006.log: Could not rename file: File currently in use. (ChromeMethodBFE: 14::RenameFile::2)
+2023/07/27-12:53:11.308 3b28 Table #7: 3 entries OK
+2023/07/27-12:53:12.321 3b28 Archiving C:\Users\HP\Desktop\work\wapp\node\.wwebjs_auth\session-admin\Default\File System\Origins/MANIFEST-000001: IO error: C:\Users\HP\Desktop\work\wapp\node\.wwebjs_auth\session-admin\Default\File System\Origins/MANIFEST-000001: Could not rename file: File currently in use. (ChromeMethodBFE: 14::RenameFile::2)

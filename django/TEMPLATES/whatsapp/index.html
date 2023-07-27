@@ -17,47 +17,7 @@
                     <button id="schedule_msg_activator" class="bg-green-900 hover:bg-green-800 transition-colors duration-200 ease-in-out text-white py-2 px-4 rounded-xl flex gap-1 justify-between items-center"><i class="fa fa-plus"></i><span>New</span></button>
                 </div>
             </div>
-            <div class="card-list grid gap-2 lg:grid-cols-2 sm:grid-cols-1"  id="scheduled-message-list">
-                <div class="card-item grid bg-slate-100 p-2 rounded" style="grid-template-columns: 2fr .4fr;">
-                    <div class="content grid gap-1">
-                        <p class="font-base font-semibold text-green-700">Message Content</p>
-                        <div class="flex gap-1">
-                            <span class="text-xs">Alex Mukulu</span>
-                            <span class="text-xs">1/2/2023 13:00</span>
-                        </div>
-                    </div>
-                    <div class="actions flex gap-1 justify-center">
-                        <button class="bg-slate-100 hover:bg-slate-50 transition-all duration-400 ease-in-out px-3"><i class="fa fa-edit"></i></button>
-                        <button class="bg-slate-100 hover:bg-slate-50 transition-all duration-400 ease-in-out px-3"><i class="fa fa-trash"></i></button>
-                    </div>
-                </div>
-                <div class="card-item grid bg-slate-100 p-2 rounded" style="grid-template-columns: 2fr .4fr;">
-                    <div class="content grid gap-1">
-                        <p class="font-base font-semibold text-green-700">Message Content</p>
-                        <div class="flex gap-1">
-                            <span class="text-xs">Alex Mukulu</span>
-                            <span class="text-xs">1/2/2023 13:00</span>
-                        </div>
-                    </div>
-                    <div class="actions flex gap-1 justify-center">
-                        <button class="bg-slate-100 hover:bg-slate-50 transition-all duration-400 ease-in-out px-3"><i class="fa fa-edit"></i></button>
-                        <button class="bg-slate-100 hover:bg-slate-50 transition-all duration-400 ease-in-out px-3"><i class="fa fa-trash"></i></button>
-                    </div>
-                </div>
-                <div class="card-item grid bg-slate-100 p-2 rounded" style="grid-template-columns: 2fr .4fr;">
-                    <div class="content grid gap-1">
-                        <p class="font-base font-semibold text-green-700">Message Content</p>
-                        <div class="flex gap-1">
-                            <span class="text-xs">Alex Mukulu</span>
-                            <span class="text-xs">1/2/2023 13:00</span>
-                        </div>
-                    </div>
-                    <div class="actions flex gap-1 justify-center">
-                        <button class="bg-slate-100 hover:bg-slate-50 transition-all duration-400 ease-in-out px-3"><i class="fa fa-edit"></i></button>
-                        <button class="bg-slate-100 hover:bg-slate-50 transition-all duration-400 ease-in-out px-3"><i class="fa fa-trash"></i></button>
-                    </div>
-                </div>
-            </div>
+            <div class="card-list grid gap-2 lg:grid-cols-2 sm:grid-cols-1"  id="scheduled-message-list"></div>
         </div>
     </div>
     <div id="scan-qr" class="grid gap-2 absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 h-full w-full rounded">
@@ -144,6 +104,13 @@
                 </div>
             </form>
             <form action="" id="msg_timing_form" class="py-4 px-2 bg-slate-100 grid gap-4 m-3 justify-start rounded">
+                <div class="grid grid-flow-col gap-2 justify-start items-center">
+                    <span>Schedule Time</span>
+                    <div class="flex gap-4">
+                        <input type="time" name="schedule_time" id="schedule_time" class="py-1 px-2">
+                        <input type="date" name="schedule_date" id="schedule_date" class="py-1 px-2">
+                    </div>
+                </div>
                 <div class="grid grid-flow-col gap-2 items-center justify-start">
                     <input type="checkbox" name="day_recurrence" id="day_recurrence">
                     <p class="text-base text-gray-600">Recurrence everyday:</p>
@@ -174,7 +141,7 @@
                 <button class="cancel_button bg-green-400 text-white transition-colors duration-200 ease-in-out py-2 px-3 rounded-lg flex gap-1 justify-between items-center" id="view_recipients">Recipients</button>
                 <button class="cancel_button bg-green-500 text-white transition-colors duration-200 ease-in-out py-2 px-3 rounded-lg flex gap-1 justify-between items-center" id="schedule_msg_modal_close">Cancel</button>
                 <button class="text-link bg-green-700 transition-colors duration-200 ease-in-out text-white py-2 px-3 rounded-lg flex gap-1 justify-between items-center" id="save_message" type="submit">Schedule</button>
-                <button class="text-link bg-green-900 transition-colors duration-200 ease-in-out text-white py-2 px-3 rounded-lg flex gap-1 justify-between items-center" id="schedule_msg_complete_activator" type="submit">Send</button>
+                <button class="text-link bg-green-900 transition-colors duration-200 ease-in-out text-white py-2 px-3 rounded-lg flex gap-1 justify-between items-center" id="schedule_msg_complete_activator" type="submit">Send Now</button>
             </footer>
         </div>
     </div>
@@ -193,9 +160,10 @@
         }
         var selectedContacts = []
 
-        // document.querySelector("#scan-qr").classList.remove("hidden")
-        // let domain = window.location.href.includes("localhost") ? "localhost" : "129.151.163.59"
-        const socket = new WebSocket(`ws://129.151.163.59/ws/`);
+        document.querySelector("#scan-qr").classList.remove("hidden")
+        let domain = window.location.href.includes("localhost") ? "localhost" : "129.151.163.59"
+        // const socket = new WebSocket(`ws://129.151.163.59/ws/`);
+        const socket = new WebSocket(`ws://localhost:3000`);
     
         socket.addEventListener("open", () => {
             // send a message to the server
@@ -229,7 +197,11 @@
                     selectedContacts = []
                     document.querySelector("textarea#msg").value = ""
                     document.querySelector("#schedule_msg_complete_activator").textContent = "Send"
-                    document.querySelector("#schedule_msg_complete_activator").style.pointer = "progress"
+                    document.querySelector("#schedule_msg_complete_activator").style.pointer = "cursor"
+
+        
+                        document.querySelector("#save_message").textContent = "Schedule"
+                        document.querySelector("#save_message").style.pointer = "cursor"
                     document.querySelector("#schedule_msg_area").classList.toggle("hidden")
                     break;
 
@@ -256,6 +228,50 @@
                     break;
             }
         });
+
+        async function renderScheduledMessages () {
+
+            const response = await fetch('{% url "manager:whatsapp-scheduler" %}', {
+                    method: 'GET',
+                });
+                const json_data = await response.json()
+                for (let data of json_data.data) {
+                    for (let contact of data.contacts) {
+                        createScheduleElem(contact, data.message, data.timing.schedule_time, data.timing.schedule_date)
+                    }
+                }
+        }
+
+        renderScheduledMessages()
+
+        function createScheduleElem(contact, msg, msg_time, msg_date) {
+            if (!msg) return;
+            const messageList = document.querySelector("#scheduled-message-list")
+            const elem = document.createElement("div")
+            elem.className = "card-item grid bg-slate-100 p-2 rounded"
+            elem.style.gridTemplateColumns = "2fr .4fr"
+            elem.innerHTML = `
+                <div class="content grid gap-1">
+                    <p class="font-base font-semibold text-green-700" style="text-wrap: wrap">${msg}</p>
+                    <div class="grid gap-1">
+                        <span class="text-xs">${contact.user}</span>
+                        <span class="text-xs">${msg_time} - ${msg_date}</span>
+                    </div>
+                </div>
+                <div class="actions flex gap-2 justify-center items-center">
+                    <button class="bg-slate-100 hover:bg-slate-50 transition-all duration-400 ease-in-out px-3"><i class="fa fa-reply"></i></button>
+                    <button class="bg-slate-100 hover:bg-slate-50 transition-all duration-400 ease-in-out px-3"><i class="fa fa-trash"></i></button>
+                </div>
+            `
+            const cardItems = document.querySelectorAll("#message-list .card-item");
+            if (cardItems.length >= 10) {
+                messageList.lastElementChild.remove()
+            }
+            messageList.prepend(elem)
+            if (document.querySelector("#scheduled-message-list").classList.contains("hidden")) {
+                document.querySelector("#scheduled-message-list").classList.remove("hidden")
+            }
+        }
     
         function showMessage(packet) {
             if (!packet.message.body) return;
@@ -271,7 +287,7 @@
                         <span class="text-xs">${new Date(packet.message.timestamp * 1000).toLocaleString()}</span>
                     </div>
                 </div>
-                <div class="actions flex gap-2 justify-center">
+                <div class="actions flex gap-2 justify-center items-center">
                     <button class="bg-slate-100 hover:bg-slate-50 transition-all duration-400 ease-in-out px-3"><i class="fa fa-reply"></i></button>
                     <button class="bg-slate-100 hover:bg-slate-50 transition-all duration-400 ease-in-out px-3"><i class="fa fa-trash"></i></button>
                 </div>
@@ -489,6 +505,17 @@
             return [startIndex, endIndex]
         }
 
+        function convertToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    resolve(reader.result);
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
         function getSendMessageData() {
             return new Promise((resolve, reject) => {
                 var msg_files = []    
@@ -496,17 +523,13 @@
     
                 return Promise.all(
                     Array.from(fileInputs).map((file) => {
-                        return new Promise((resolve) => {
-                            const reader = new FileReader();
-                            reader.onload = () => {
-                                const fileData = reader.result;
-                                msg_files.push({
-                                    fileData: fileData,
-                                    fileName: file.name,
-                                });
-                                resolve();
-                            };
-                            reader.readAsDataURL(file);
+                        return new Promise(async (resolve) => {
+                            const base64String = await convertToBase64(file);
+                            msg_files.push({
+                                fileData: base64String,
+                                fileName: file.name,
+                            });
+                            resolve();
                         });
                     })
                 )
@@ -521,6 +544,8 @@
                     let single_interval_period = msg_timing_form.querySelector("#single_interval_period")
                     let bundle_msg_count = msg_timing_form.querySelector("#bundle_msg_count")
                     let bundle_msg_interval = msg_timing_form.querySelector("#bundle_msg_interval")
+                    let schedule_time = msg_timing_form.querySelector("#schedule_time")
+                    let schedule_date = msg_timing_form.querySelector("#schedule_date")
                     
 
                     let timing_data = {
@@ -529,6 +554,8 @@
                         single_interval_period: single_interval_period.value,
                         bundle_msg_count: bundle_msg_count.value,
                         bundle_msg_interval: bundle_msg_interval.value,
+                        schedule_time: schedule_time.value,
+                        schedule_date: schedule_date.value,
                     }
 
                     let data  = {
@@ -568,16 +595,26 @@
         document.querySelector("#save_message")
             .addEventListener("click", async (e) => {
                 e.preventDefault()
-                document.querySelector("#schedule_msg_complete_activator").textContent = "Sending ..."
-                document.querySelector("#schedule_msg_complete_activator").style.pointer = "progress"
+                document.querySelector("#save_message").textContent = "Saving ..."
+                document.querySelector("#save_message").style.pointer = "progress"
 
                 let formData = await getSendMessageData()
 
-                // socket.send(JSON.stringify({
-                //     type: "connect user",
-                //     username: "{{request.user.username}}"
-                // }));
-                resetRecipientModal()
+                // send to server
+                const response = await fetch('{% url "manager:whatsapp-scheduler" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        // Add any other headers as needed
+                    },
+                    body: JSON.stringify(formData),
+                });
+                const data = await response.json()
+                for (let contact of data.contacts) {
+                    createScheduleElem(contact, data.message, data.timing.schedule_time, data.timing.schedule_date)
+                }
+                
+                // resetRecipientModal()
             })
 
         document.querySelector("#view_recipients")
