@@ -10,13 +10,13 @@ FROM node:18
 WORKDIR /code
 
 # Install dependencies
-COPY ./code/package.json /code
-COPY ./code/package-lock.json /code
-RUN npm install 
+# COPY ./code/package.json /code
+# COPY ./code/package-lock.json /code
+# RUN npm install 
 
 # Copy the Node.js code files to the container
 COPY ./code /code
 EXPOSE 3000
 
 # Start the Node.js app
-CMD ["node", "server.js"]
+# CMD ["node", "server.js"]
