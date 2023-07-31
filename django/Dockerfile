@@ -11,8 +11,8 @@ ENV PYTHONUNBUFFERED 1
 WORKDIR /code
 
 # Install dependencies
-COPY ./code/requirements.txt /code
-RUN pip install --no-cache-dir -r /code/requirements.txt
+COPY ./code/requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the Django code files to the container
 COPY ./code /code

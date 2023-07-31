@@ -7,11 +7,10 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./django:/code
+      - ./code:.
     depends_on:
-      - db
+      # - db
       - redis
-      - node_app
     env_file:
       - .env
     command: >
@@ -19,24 +18,16 @@ services:
              python ./code/manage.py migrate &&
              python ./code/manage.py runserver 0.0.0.0:8000"
 
-  node_app:
-    build:
-      context: ./node
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./node:/code
-      
   redis:
     image: redis:alpine
     ports:
       - "6379:6379"
 
-  db:
-    image: postgres:15.1-alpine
-    ports:
-      - "5432:5432"
-    env_file:
-      - .env
-    volumes:
-      - ./db_data/:/var/lib/postgresql/data
+  # db:
+  #   image: postgres:15.1-alpine
+  #   ports:
+  #     - "5432:5432"
+  #   env_file:
+  #     - .env
+  #   volumes:
+  #     - ./db_data/:/var/lib/postgresql/data
