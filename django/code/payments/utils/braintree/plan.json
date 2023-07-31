@@ -1,0 +1,18 @@
+[
+    {
+        "id": "one-virtual-showroom-monthly-virtual-showrooms",
+        "name": "One Virtual Showroom Monthly",
+        "description": "One Virtual Showroom Monthly subscription",
+        "billing_frequency": "1",
+        "currency_iso_code": "USD",
+        "Price": "60"
+    },
+    {
+        "id": "one-virtual-showroom-6-month-virtual-showrooms",
+        "name": "One Virtual Showroom 6 Month",
+        "description": "One Virtual Showroom 6 Month subscription",
+        "billing_frequency": "6",
+        "currency_iso_code": "USD",
+        "Price": "300"
+    }
+]
