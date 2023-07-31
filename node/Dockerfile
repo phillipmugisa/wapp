@@ -4,14 +4,14 @@
 FROM node:18
 
 # Set environment variable
-ENV NODE_ENV=production
+# ENV NODE_ENV=production
 
 # Create and set the working directory
 WORKDIR /code
 
 # Install dependencies
 COPY ./code/package.json ./code/package-lock.json /code/
-RUN npm install --omit=dev
+RUN npm install 
 
 # Copy the Node.js code files to the container
 COPY ./code /code/
