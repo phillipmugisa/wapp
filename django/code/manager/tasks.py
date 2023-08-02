@@ -54,8 +54,9 @@ def send_scheduled_message():
         due_tasks = ManagerModels.Task.objects.filter(schedule_date__lte = datetime.now(), sent=False)
         logger.info(due_tasks)
         for task in due_tasks:
-            asyncio.get_event_loop().run_until_complete(send_json_data(os.environ.get("NODE_SOCKET_HOST"), os.environ.get("NODE_SOCKET_PORT"), task.user.username, task.data))
+            asyncio.get_event_loop().run_until_complete(send_json_data(os.environ.get("NODE_SOCKET_HOST"), 3030, task.user.username, task.data))
             task.sent = True
             task.save()
+            # task.delete()
     except Exception as err:
         print(err)

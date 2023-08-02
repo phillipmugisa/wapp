@@ -161,8 +161,8 @@
         var selectedContacts = []
 
         document.querySelector("#scan-qr").classList.remove("hidden")
-        const socket = new WebSocket(`ws://129.151.163.59/ws/`);
-        // const socket = new WebSocket(`ws://localhost:3000`);
+        // const socket = new WebSocket(`ws://129.151.163.59/ws/`);
+        const socket = new WebSocket(`ws://localhost/ws/`);
     
         socket.addEventListener("open", () => {
             // send a message to the server
@@ -199,8 +199,8 @@
                     document.querySelector("#schedule_msg_complete_activator").style.pointer = "cursor"
 
         
-                        document.querySelector("#save_message").textContent = "Schedule"
-                        document.querySelector("#save_message").style.pointer = "cursor"
+                    document.querySelector("#save_message").textContent = "Schedule"
+                    document.querySelector("#save_message").style.pointer = "cursor"
                     document.querySelector("#schedule_msg_area").classList.toggle("hidden")
                     break;
 
@@ -262,10 +262,6 @@
                     <button class="bg-slate-100 hover:bg-slate-50 transition-all duration-400 ease-in-out px-3"><i class="fa fa-trash"></i></button>
                 </div>
             `
-            const cardItems = document.querySelectorAll("#message-list .card-item");
-            if (cardItems.length >= 10) {
-                messageList.lastElementChild.remove()
-            }
             messageList.prepend(elem)
             if (document.querySelector("#scheduled-message-list").classList.contains("hidden")) {
                 document.querySelector("#scheduled-message-list").classList.remove("hidden")
@@ -292,7 +288,7 @@
                 </div>
             `
             const cardItems = document.querySelectorAll("#message-list .card-item");
-            if (cardItems.length >= 10) {
+            if (cardItems.length >= 5) {
                 messageList.lastElementChild.remove()
             }
             messageList.prepend(elem)
@@ -318,6 +314,7 @@
             .addEventListener("click", e => {
                 socket.send(JSON.stringify({
                     type: "contacts",
+                    username: "{{request.user.username}}"
                 }));
                 document.querySelector("#select_from_contact_list").disabled = true
                 document.querySelector("#select_from_contact_list").style.cursor = "progress"
@@ -386,7 +383,7 @@
 
         function createContactList(contacts) {
             const number_list = document.querySelector("#number_list")
-            number_list.innerHTML = ""
+            number_list.value = ""
             contacts.forEach(contact => {
                 number_list.appendChild(getContactItem(contact))
             })
@@ -585,9 +582,12 @@
 
                 socket.send(JSON.stringify({
                     type: "send message",
-                    data: formData
+                    data: formData,
+                    username: "{{request.user.username}}"
                 }));
 
+                document.querySelector("#send_message_form").reset()
+                document.querySelector("#msg_timing_form").reset()
                 resetRecipientModal()
             })
 
@@ -608,10 +608,16 @@
                     },
                     body: JSON.stringify(formData),
                 });
-                const data = await response.json().data
-                for (let contact of data.contacts) {
-                    createScheduleElem(contact, data.message, data.timing.schedule_time, data.timing.schedule_date)
+                const data = await response.json()
+                console.log(data)
+                for (let contact of data.data.contacts) {
+                    createScheduleElem(contact, data.data.message, data.data.timing.schedule_time, data.data.timing.schedule_date)
                 }
+                
+                document.querySelector("#send_message_form").reset()
+                document.querySelector("#msg_timing_form").reset()
+                
+                document.querySelector("#schedule_msg_area").classList.toggle("hidden")
                 resetRecipientModal()
                 
             })
