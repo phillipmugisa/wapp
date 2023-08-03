@@ -7,8 +7,8 @@ const connectedUsers = new Map()
 let myContacts = new Map()
 
 // Require database
-const { MongoStore } = require('wwebjs-mongo');
-const mongoose = require('mongoose');
+import { MongoStore } from 'wwebjs-mongo';
+import mongoose from 'mongoose';
 
 const server = new WebSocketServer({ port: 3000 });
 server.on("connection", (socket) => {
