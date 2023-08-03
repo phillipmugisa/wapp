@@ -75,6 +75,12 @@ server.on("connection", (socket) => {
                             }))
                         });
                     
+                    
+                    connectedUsers.get(packet.username)
+                        .on('remote_session_saved', () => {
+                            console.log("remote_session_saved for ", packet.username)
+                        })
+                    
                     connectedUsers.get(packet.username)
                         .initialize();
                 });
