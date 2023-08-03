@@ -10,6 +10,8 @@ let myContacts = new Map()
 import { MongoStore } from 'wwebjs-mongo';
 import mongoose from 'mongoose';
 
+const MONGODB_URI = "mongodb://localhost/wapp"
+
 const server = new WebSocketServer({ port: 3000 });
 server.on("connection", (socket) => {
     // send a message to the client
@@ -18,7 +20,7 @@ server.on("connection", (socket) => {
         const packet = JSON.parse(data);
         switch (packet.type) {
             case "connect user":
-                mongoose.connect(process.env.MONGODB_URI).then(() => {
+                mongoose.connect(MONGODB_URI).then(() => {
                     const store = new MongoStore({ mongoose: mongoose });
                     const client = new Client({
                         authStrategy: new RemoteAuth({
@@ -181,7 +183,7 @@ backendConnectionServer.on("connection", (socket) => {
         const packet = JSON.parse(data);
         switch (packet.type) {
             case "connect user":
-                mongoose.connect(process.env.MONGODB_URI).then(() => {
+                mongoose.connect(MONGODB_URI).then(() => {
                     const store = new MongoStore({ mongoose: mongoose });
                     const client = new Client({
                         authStrategy: new RemoteAuth({
