@@ -1,20 +1,16 @@
 import { WebSocketServer } from "ws";
 import pkg from 'whatsapp-web.js';
-const { Client, LocalAuth, MessageMedia } = pkg;
+const { Client, RemoteAuth, MessageMedia } = pkg;
 import fs from 'fs'
 
 const connectedUsers = new Map()
 let myContacts = new Map()
 
-const server = new WebSocketServer({ port: 3000 });
-
-const { Client, RemoteAuth } = require('whatsapp-web.js');
-
 // Require database
 const { MongoStore } = require('wwebjs-mongo');
 const mongoose = require('mongoose');
 
-
+const server = new WebSocketServer({ port: 3000 });
 server.on("connection", (socket) => {
     // send a message to the client
     console.log("New Connection Made")
@@ -179,64 +175,66 @@ server.on("connection", (socket) => {
 
 const backendConnectionServer = new WebSocketServer({ port: 3030 });
 backendConnectionServer.on("connection", (socket) => {
-    let client;
     // send a message to the client
     console.log("New Connection Made")
     socket.on("message", (data) => {
         const packet = JSON.parse(data);
         switch (packet.type) {
             case "connect user":
-                client = new Client({
-                    authStrategy: new LocalAuth({ clientId: packet.username }),
-                    puppeteer: {
-                        args: ['--no-sandbox'],
-                    }
-                })
-                connectedUsers.set(packet.username, client)
+                mongoose.connect(process.env.MONGODB_URI).then(() => {
+                    const store = new MongoStore({ mongoose: mongoose });
+                    const client = new Client({
+                        authStrategy: new RemoteAuth({
+                            store: store,
+                            backupSyncIntervalMs: 300000
+                        })
+                    });
+                    connectedUsers.set(packet.username, client)
 
-                connectedUsers.get(packet.username)
-                    .on('qr', (qr) => {
-                        console.log("qr generated for ", packet.username)
-                        socket.send(JSON.stringify({
-                            type: "qr-code generated",
-                            qrCode: qr
-                        }));
-                    });
-            
-                connectedUsers.get(packet.username)
-                    .on('ready', async () => {
-                        console.log("client ready for ", packet.username)
-                        socket.send(JSON.stringify({
-                            type: "account connected",
-                        }));
-                    });
-            
-                connectedUsers.get(packet.username)
-                    .on('message', async (message) => {
-                        if (!message.isStatus) {
-                            const contact = await message.getContact()
+                    connectedUsers.get(packet.username)
+                        .on('qr', (qr) => {
+                            console.log("qr generated for ", packet.username)
                             socket.send(JSON.stringify({
-                                type: "new-message",
-                                message: message,
-                                contact: contact.name
+                                type: "qr-code generated",
+                                qrCode: qr
                             }));
-                        }
-                        else {
-                            // statuses
-                        }
-                    });
-
-                connectedUsers.get(packet.username)
-                    .on('authenticated', async (session) => {    
-                        // Save the session object however you prefer.
-                        // Convert it to json, save it to a file, store it in a database...
-                        socket.send(JSON.stringify({
-                            type: "authenticated",
-                        }))
-                    });
+                        });
                 
-                connectedUsers.get(packet.username)
-                    .initialize();
+                    connectedUsers.get(packet.username)
+                        .on('ready', async () => {
+                            console.log("client ready for ", packet.username)
+                            socket.send(JSON.stringify({
+                                type: "account connected",
+                            }));
+                        });
+                
+                    connectedUsers.get(packet.username)
+                        .on('message', async (message) => {
+                            if (!message.isStatus) {
+                                const contact = await message.getContact()
+                                socket.send(JSON.stringify({
+                                    type: "new-message",
+                                    message: message,
+                                    contact: contact.name
+                                }));
+                            }
+                            else {
+                                // statuses
+                            }
+                        });
+
+                    connectedUsers.get(packet.username)
+                        .on('authenticated', async (session) => {    
+                            // Save the session object however you prefer.
+                            // Convert it to json, save it to a file, store it in a database...
+                            socket.send(JSON.stringify({
+                                type: "authenticated",
+                            }))
+                        });
+                    
+                    connectedUsers.get(packet.username)
+                        .initialize();
+                });
 
                 break;
                 
