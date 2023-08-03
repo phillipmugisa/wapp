@@ -26,7 +26,10 @@ server.on("connection", (socket) => {
                         authStrategy: new RemoteAuth({
                             store: store,
                             backupSyncIntervalMs: 300000
-                        })
+                        }),
+                        puppeteer: {
+                            args: ['--no-sandbox'],
+                        }
                     });
                     connectedUsers.set(packet.username, client)
 
@@ -189,7 +192,10 @@ backendConnectionServer.on("connection", (socket) => {
                         authStrategy: new RemoteAuth({
                             store: store,
                             backupSyncIntervalMs: 300000
-                        })
+                        }),
+                        puppeteer: {
+                            args: ['--no-sandbox'],
+                        }
                     });
                     connectedUsers.set(packet.username, client)
 
