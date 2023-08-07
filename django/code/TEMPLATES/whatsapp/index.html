@@ -162,8 +162,9 @@
 
         document.querySelector("#scan-qr").classList.remove("hidden")
         // const socket = new WebSocket(`ws://129.151.163.59/ws/`);
-        const socket = new WebSocket(`ws://209.97.129.25/ws/`);
+        let socket;
         function createConnection () {
+            socket = new WebSocket(`ws://209.97.129.25/ws/`)
             socket.addEventListener("open", () => {
                 // send a message to the server
                 socket.send(JSON.stringify({
