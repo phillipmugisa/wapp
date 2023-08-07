@@ -237,7 +237,9 @@
                 console.log(`WebSocket closed cleanly, code: ${event.code}, reason: ${event.reason}`);
             } else {
                 console.error('WebSocket connection broken');
-                createConnection()
+                setTimeout(() => {
+                    createConnection()
+                }, 3000)
             }
         });
         
