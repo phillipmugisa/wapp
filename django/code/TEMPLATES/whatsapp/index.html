@@ -163,14 +163,17 @@
         document.querySelector("#scan-qr").classList.remove("hidden")
         // const socket = new WebSocket(`ws://129.151.163.59/ws/`);
         const socket = new WebSocket(`ws://209.97.129.25/ws/`);
-    
-        socket.addEventListener("open", () => {
-            // send a message to the server
-            socket.send(JSON.stringify({
-                type: "connect user",
-                username: "{{request.user.username}}"
-            }));
-        });
+        function createConnection () {
+            socket.addEventListener("open", () => {
+                // send a message to the server
+                socket.send(JSON.stringify({
+                    type: "connect user",
+                    username: "{{request.user.username}}"
+                }));
+            });
+        }
+        
+        createConnection()
     
         // receive a message from the server
         socket.addEventListener("message", ({ data }) => {
@@ -228,6 +231,15 @@
             }
         });
 
+        socket.addEventListener('close', event => {
+            if (event.wasClean) {
+                console.log(`WebSocket closed cleanly, code: ${event.code}, reason: ${event.reason}`);
+            } else {
+                console.error('WebSocket connection broken');
+                createConnection()
+            }
+        });
+        
         async function renderScheduledMessages () {
 
             const response = await fetch('{% url "manager:whatsapp-scheduler" %}', {
