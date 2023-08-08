@@ -18,6 +18,7 @@ server.on("connection", (socket) => {
     console.log("New Connection Made")
     socket.on("message", (data) => {
         const packet = JSON.parse(data);
+        console.log("type: ", packet.type)
         switch (packet.type) {
             case "connect user":
                 mongoose.connect(MONGODB_URI).then(() => {
