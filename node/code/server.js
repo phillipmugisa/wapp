@@ -192,6 +192,10 @@ backendConnectionServer.on("connection", (socket) => {
     socket.on("message", (data) => {
         const packet = JSON.parse(data);
         switch (packet.type) {
+            case "keep alive":
+                console.log("keep alive")
+                break;
+                
             case "connect user":
                 mongoose.connect(MONGODB_URI).then(() => {
                     const store = new MongoStore({ mongoose: mongoose });
