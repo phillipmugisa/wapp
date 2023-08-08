@@ -186,6 +186,19 @@
         }
         
         createConnection()
+
+        
+
+        socket.addEventListener('close', event => {
+            if (event.wasClean) {
+                console.log(`WebSocket closed cleanly, code: ${event.code}, reason: ${event.reason}`);
+            } else {
+                console.error('WebSocket connection broken');
+                setTimeout(() => {
+                    createConnection()
+                }, 10000)
+            }
+        });
     
         // receive a message from the server
         socket.addEventListener("message", ({ data }) => {
@@ -243,17 +256,6 @@
 
                 case "remote_session_saved":
                     break;
-            }
-        });
-
-        socket.addEventListener('close', event => {
-            if (event.wasClean) {
-                console.log(`WebSocket closed cleanly, code: ${event.code}, reason: ${event.reason}`);
-            } else {
-                console.error('WebSocket connection broken');
-                setTimeout(() => {
-                    // createConnection()
-                }, 10000)
             }
         });
         
