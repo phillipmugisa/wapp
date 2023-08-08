@@ -165,14 +165,11 @@
         let socket;
 
         function keepAlive() {
-            let i = 1;
             setInterval(() => {
-                console.log("keeping", i)
                 socket.send(JSON.stringify({
                     type: "keep alive",
                     username: "{{request.user.username}}"
                 }));
-                i++;
             }, 1000)
         }
 
