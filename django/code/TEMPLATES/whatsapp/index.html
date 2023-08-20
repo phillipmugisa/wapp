@@ -191,7 +191,7 @@
                 console.error('WebSocket connection broken');
                 setTimeout(() => {
                     createConnection()
-                }, 2000)
+                }, 5000)
             }
         });
 
@@ -221,13 +221,13 @@
                     showMessage(packet)
                     break;
                 case "keep alive":
-                    console.log("PONG")
+                    console.log("-")
                     setTimeout(() => {
                         socket.send(JSON.stringify({
                             type: "keep alive",
                             username: "{{request.user.username}}"
                         }));
-                    }, 2000)
+                    }, 5000)
                     break;
 
                 case "message sent":
