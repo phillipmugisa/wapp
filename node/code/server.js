@@ -32,8 +32,13 @@ server.on("connection", (socket) => {
                             args: ['--no-sandbox'],
                         }
                     });
+                    
+                    connectedUsers.get(packet.username)
+                        .initialize();
+                        
+                    connectedUsers.set(packet.username, client)
 
-                    client
+                    connectedUsers.get(packet.username)
                         .on('qr', (qr) => {
                             console.log("qr generated for ", packet.username)
                             socket.send(JSON.stringify({
@@ -42,35 +47,46 @@ server.on("connection", (socket) => {
                             }));
                         });
                 
-                    client
+                    connectedUsers.get(packet.username)
                         .on('ready', async () => {
                             console.log("client ready for ", packet.username)
                             socket.send(JSON.stringify({
                                 type: "account connected",
                             }));
-                            connectedUsers.set(packet.username, client)
+                        });
+                
+                    connectedUsers.get(packet.username)
+                        .on('message', async (message) => {
+                            if (!message.isStatus) {
+                                const contact = await message.getContact()
+                                socket.send(JSON.stringify({
+                                    type: "new-message",
+                                    message: message,
+                                    contact: contact.name
+                                }));
+                            }
+                            else {
+                                // statuses
+                            }
                         });
 
-                    client
+                    connectedUsers.get(packet.username)
                         .on('authenticated', async (session) => {    
                             // Save the session object however you prefer.
                             // Convert it to json, save it to a file, store it in a database...
                             socket.send(JSON.stringify({
                                 type: "authenticated",
                             }))
-                            console.log("authenticated")
                         });
                     
                     
-                    client
+                    connectedUsers.get(packet.username)
                         .on('remote_session_saved', () => {
                             console.log("remote_session_saved for ", packet.username)
                             socket.send(JSON.stringify({
                                 type: "remote_session_saved",
                             }))
                         })
-                    
-                    client.initialize();
                 });
 
                 break;
