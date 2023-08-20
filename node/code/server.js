@@ -53,6 +53,9 @@ server.on("connection", (socket) => {
 
                 connectedUsers.get(packet.username)
                     .on('qr', (qr) => {
+                        if (connectedUsers.get(packet.username)) {
+                            connectedUsers.delete(packet.username)
+                        }
                         console.log("qr generated for ", packet.username)
                         socket.send(JSON.stringify({
                             type: "qr-code generated",
