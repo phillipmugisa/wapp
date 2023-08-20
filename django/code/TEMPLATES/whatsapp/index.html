@@ -163,15 +163,6 @@
         document.querySelector("#scan-qr").classList.remove("hidden")
         let socket;
 
-        // function keepAlive() {
-        //     setInterval(() => {
-        //         socket.send(JSON.stringify({
-        //             type: "keep alive",
-        //             username: "{{request.user.username}}"
-        //         }));
-        //     }, 1000)
-        // }
-
         function createConnection () {
             socket = new WebSocket(`ws://209.97.129.25/ws/`)
             // socket = new WebSocket(`ws://localhost:3000`)
@@ -181,7 +172,13 @@
                     type: "connect user",
                     username: "{{request.user.username}}"
                 }));
-                // keepAlive()
+                
+                setTimeout(() => {
+                    socket.send(JSON.stringify({
+                        type: "keep alive",
+                        username: "{{request.user.username}}"
+                    }));
+                }, 5000)
             });
         }
         
@@ -222,6 +219,15 @@
                     break;
                 case "new-message":
                     showMessage(packet)
+                    break;
+                case "keep alive":
+                    console.log("PONG")
+                    setTimeout(() => {
+                        socket.send(JSON.stringify({
+                            type: "keep alive",
+                            username: "{{request.user.username}}"
+                        }));
+                    }, 2000)
                     break;
 
                 case "message sent":

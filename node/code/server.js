@@ -19,6 +19,15 @@ server.on("connection", (socket) => {
     socket.on("message", (data) => {
         const packet = JSON.parse(data);
         switch (packet.type) {
+            case "keep alive":
+                console.log("PING")
+                setTimeout(() => {
+                    socket.send(JSON.stringify({
+                        type: "keep alive",
+                        username: "{{request.user.username}}"
+                    }));
+                }, 2000)
+                break;
             case "connect user":
                 // mongoose.connect(MONGODB_URI).then(() => {
                 //     const store = new MongoStore({ mongoose: mongoose });
