@@ -33,10 +33,11 @@ server.on("connection", (socket) => {
                         }
                     });
                     
+                    connectedUsers.set(packet.username, client)
+                    
                     connectedUsers.get(packet.username)
                         .initialize();
                         
-                    connectedUsers.set(packet.username, client)
 
                     connectedUsers.get(packet.username)
                         .on('qr', (qr) => {
