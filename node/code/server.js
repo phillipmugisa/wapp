@@ -1,6 +1,6 @@
 import { WebSocketServer } from "ws";
 import pkg from 'whatsapp-web.js';
-const { Client, RemoteAuth, MessageMedia } = pkg;
+const { Client, RemoteAuth, MessageMedia, LocalAuth } = pkg;
 import fs from 'fs'
 
 const connectedUsers = new Map()
@@ -20,21 +20,29 @@ server.on("connection", (socket) => {
         const packet = JSON.parse(data);
         switch (packet.type) {
             case "connect user":
-                mongoose.connect(MONGODB_URI).then(() => {
-                    const store = new MongoStore({ mongoose: mongoose });
+                // mongoose.connect(MONGODB_URI).then(() => {
+                //     const store = new MongoStore({ mongoose: mongoose });
+                //     const client = new Client({
+                //         authStrategy: new RemoteAuth({
+                //             clientId: packet.username,
+                //             store: store,
+                //             backupSyncIntervalMs: 300000
+                //         }),
+                //         puppeteer: {
+                //             args: ['--no-sandbox'],
+                //         }
+                //     });
+
+                
                     const client = new Client({
-                        authStrategy: new RemoteAuth({
-                            clientId: packet.username,
-                            store: store,
-                            backupSyncIntervalMs: 300000
-                        }),
+                        authStrategy: new LocalAuth({ clientId: packet.username }),
                         puppeteer: {
                             args: ['--no-sandbox'],
                         }
                     });
                     
                     connectedUsers.set(packet.username, client)
-                    
+
                     connectedUsers.get(packet.username)
                         .initialize();
                         
@@ -88,7 +96,7 @@ server.on("connection", (socket) => {
                                 type: "remote_session_saved",
                             }))
                         })
-                });
+                // });
 
                 break;
                 
