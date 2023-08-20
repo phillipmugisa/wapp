@@ -11,8 +11,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "mongoose": "^7.4.3",
     "nodemon": "^3.0.1",
     "puppeteer": "^20.8.2",
-    "whatsapp-web.js": "^1.21.0"
+    "whatsapp-web.js": "^1.21.0",
+    "wwebjs-mongo": "^1.1.0"
   }
 }

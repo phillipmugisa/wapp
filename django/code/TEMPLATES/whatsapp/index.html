@@ -161,34 +161,32 @@
         var selectedContacts = []
 
         document.querySelector("#scan-qr").classList.remove("hidden")
-        // const socket = new WebSocket(`ws://129.151.163.59/ws/`);
         let socket;
 
-        function keepAlive() {
-            setInterval(() => {
-                socket.send(JSON.stringify({
-                    type: "keep alive",
-                    username: "{{request.user.username}}"
-                }));
-            }, 1000)
-        }
+        // function keepAlive() {
+        //     setInterval(() => {
+        //         socket.send(JSON.stringify({
+        //             type: "keep alive",
+        //             username: "{{request.user.username}}"
+        //         }));
+        //     }, 1000)
+        // }
 
         function createConnection () {
             socket = new WebSocket(`ws://209.97.129.25/ws/`)
+            // socket = new WebSocket(`ws://localhost:3000`)
             socket.addEventListener("open", () => {
                 // send a message to the server
                 socket.send(JSON.stringify({
                     type: "connect user",
                     username: "{{request.user.username}}"
                 }));
-                keepAlive()
+                // keepAlive()
             });
         }
         
         createConnection()
-
         
-
         socket.addEventListener('close', event => {
             if (event.wasClean) {
                 console.log(`WebSocket closed cleanly, code: ${event.code}, reason: ${event.reason}`);
@@ -199,6 +197,12 @@
                 }, 10000)
             }
         });
+
+        document.querySelector("beforeunload", () => {
+            if (socket.readyState === WebSocket.OPEN) {
+                socket.close(10000, "User exited")
+            }
+        })
     
         // receive a message from the server
         socket.addEventListener("message", ({ data }) => {
@@ -343,6 +347,10 @@
 
         document.querySelector("#select_from_contact_list")
             .addEventListener("click", e => {
+                if (socket.readyState != WebSocket.OPEN) {
+                    createConnection()
+                    return;
+                }
                 socket.send(JSON.stringify({
                     type: "contacts",
                     username: "{{request.user.username}}"
@@ -611,6 +619,10 @@
 
                 let formData = await getSendMessageData()
 
+                if (socket.readyState != WebSocket.OPEN) {
+                    createConnection()
+                    return;
+                }
                 socket.send(JSON.stringify({
                     type: "send message",
                     data: formData,
