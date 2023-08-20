@@ -24,7 +24,6 @@ server.on("connection", (socket) => {
         const packet = JSON.parse(data);
         switch (packet.type) {
             case "keep alive":
-                console.log("PONG")
                 setTimeout(() => {
                     socket.send(JSON.stringify({
                         type: "keep alive",
