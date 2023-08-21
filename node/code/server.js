@@ -20,184 +20,194 @@ const server = new WebSocketServer({ port: 3000 });
 server.on("connection", (socket) => {
     // send a message to the client
     console.log("New Connection Made")
-    socket.on("message", (data) => {
-        const packet = JSON.parse(data);
-        switch (packet.type) {
-            case "keep alive":
-                setTimeout(() => {
-                    socket.send(JSON.stringify({
-                        type: "keep alive",
-                        username: "{{request.user.username}}"
-                    }));
-                }, 5000)
-                break;
-                
-            case "connect user":
-                const client = new Client({
-                    authStrategy: new RemoteAuth({
-                        clientId: packet.username,
-                        store: store,
-                        backupSyncIntervalMs: 300000
-                    }),
-                    puppeteer: {
-                        args: ['--no-sandbox'],
-                    }
-                });
-                
-                client
-                    .initialize();
+    try {
+        socket.on("message", (data) => {
+            const packet = JSON.parse(data);
+            switch (packet.type) {
+                case "keep alive":
+                    setTimeout(() => {
+                        socket.send(JSON.stringify({
+                            type: "keep alive",
+                            username: "{{request.user.username}}"
+                        }));
+                    }, 5000)
+                    break;
                     
-
-                client
-                    .on('qr', (qr) => {
-                        if (connectedUsers.get(packet.username)) {
-                            connectedUsers.delete(packet.username)
+                case "connect user":
+                    const client = new Client({
+                        authStrategy: new RemoteAuth({
+                            clientId: packet.username,
+                            store: store,
+                            backupSyncIntervalMs: 300000
+                        }),
+                        puppeteer: {
+                            args: ['--no-sandbox'],
                         }
-                        console.log("qr generated for ", packet.username)
-                        socket.send(JSON.stringify({
-                            type: "qr-code generated",
-                            qrCode: qr
-                        }));
                     });
-            
-                client
-                    .on('ready', async () => {
-                        console.log("client ready for ", packet.username)
-                        socket.send(JSON.stringify({
-                            type: "account connected",
-                        }));
-                        connectedUsers.set(packet.username, client)
-                    });
-            
-                client
-                    .on('message', async (message) => {
-                        if (!message.isStatus) {
-                            const contact = await message.getContact()
+                    
+                    client
+                        .initialize();
+                        
+
+                    client
+                        .on('qr', (qr) => {
+                            if (connectedUsers.get(packet.username)) {
+                                connectedUsers.delete(packet.username)
+                            }
+                            console.log("qr generated for ", packet.username)
                             socket.send(JSON.stringify({
-                                type: "new-message",
-                                message: message,
-                                contact: contact.name
+                                type: "qr-code generated",
+                                qrCode: qr
                             }));
-                        }
-                        else {
-                            // statuses
-                        }
-                    });
-
-                client
-                    .on('authenticated', async (session) => {    
-                        // Save the session object however you prefer.
-                        // Convert it to json, save it to a file, store it in a database...
-                        socket.send(JSON.stringify({
-                            type: "authenticated",
-                        }))
-                    });
+                        });
                 
+                    client 
+                        .on('ready', async () => {
+                            console.log("client ready for ", packet.username)
+                            socket.send(JSON.stringify({
+                                type: "account connected",
+                            }));
+                            connectedUsers.set(packet.username, client)
+                        });
                 
-                client
-                    .on('remote_session_saved', () => {
-                        console.log("remote_session_saved for ", packet.username)
-                        socket.send(JSON.stringify({
-                            type: "remote_session_saved",
-                        }))
-                    })
-
-                break;
-                
-            case "contacts":
-                try {
-                    let contacts_list = []
-                    connectedUsers.get(packet.username)
-                    .getContacts()
-                    .then(contacts => {
-                        if (!myContacts.get(packet.username)) {
-                            myContacts.set(packet.username, contacts)
-                        }
-                        myContacts.get(packet.username)
-                        .forEach(contact => {
-                            if (contact.name != "...." && contact.id.server != "lid") {
-                                let ct = {
-                                    id: contact.id,
-                                    name: contact.name,
-                                    number: contact.id.user,
-                                    isGroup: contact.isGroup,
-                                    isBusiness: contact.isBusiness,
-                                }
-                                contacts_list.push(ct)
+                    client 
+                        .on('message', async (message) => {
+                            if (!message.isStatus) {
+                                const contact = await message.getContact()
+                                socket.send(JSON.stringify({
+                                    type: "new-message",
+                                    message: message,
+                                    contact: contact.name
+                                }));
+                            }
+                            else {
+                                // statuses
                             }
                         });
-                        
-                        socket.send(JSON.stringify({
-                            type: "contact list",
-                            contacts: contacts_list
-                        }));
-                    })
-                }
-                catch (err) {
-                }
-                break;
-            case "send message":
 
-                for (let item of packet.data.contacts) {
-                    for (const file of packet.data.files) {
-                        const fileData = file.fileData;
-                        const fileName = file.fileName;
-
-                        const data = fileData.replace(/^data:image\/\w+;base64,/, '');
-                        const buffer = Buffer.from(data, 'base64');
-
-                        fs.writeFileSync(fileName, buffer, {encoding: 'base64'});
-
-                        const filePath = `./${fileName}`;
-                  
-                        const media = MessageMedia.fromFilePath(filePath);
-
-                        if (packet.data.files.length == 1) {
-                            connectedUsers.get(packet.username)
-                            .sendMessage(item._serialized, media, { caption: packet.data.message })
-                            .then(() => {
-                                socket.send(JSON.stringify({
-                                    type: "message sent",
-                                }));
-                            })
-                            .catch ((err) => {
-                                console.log(err)
-                            })
-                            .finally(() => {
-                                fs.unlinkSync(filePath);
-                            })
-                        }
-                        else {
-                            connectedUsers.get(packet.username)
-                            .sendMessage(item._serialized, media)
-                            .then(() => {
-                                socket.send(JSON.stringify({
-                                    type: "message sent",
-                                }));
-                            })
-                            .catch ((err) => {
-                                console.log(err)
-                            })
-                            .finally(() => {
-                                fs.unlinkSync(filePath);
-                            })
-                        }
-                    }
-                    if (packet.data.files.length != 1) {
-                        console.log("message: ", item._serialized, packet.data.message)
-                        connectedUsers.get(packet.username)
-                        .sendMessage(item._serialized, packet.data.message)
-                        .then(() => {
+                    client 
+                        .on('authenticated', async (session) => {    
+                            // Save the session object however you prefer.
+                            // Convert it to json, save it to a file, store it in a database...
                             socket.send(JSON.stringify({
-                                type: "message sent",
+                                type: "authenticated",
+                            }))
+                        });
+                    
+                    
+                    client 
+                        .on('remote_session_saved', () => {
+                            console.log("remote_session_saved for ", packet.username)
+                            socket.send(JSON.stringify({
+                                type: "remote_session_saved",
+                            }))
+                        })
+
+                    break;
+                    
+                case "contacts":
+                    try {
+                        let contacts_list = []
+                        connectedUsers.get(packet.username)
+                        .getContacts()
+                        .then(contacts => {
+                            if (!myContacts.get(packet.username)) {
+                                myContacts.set(packet.username, contacts)
+                            }
+                            myContacts.get(packet.username)
+                            .forEach(contact => {
+                                if (contact.name != "...." && contact.id.server != "lid") {
+                                    let ct = {
+                                        id: contact.id,
+                                        name: contact.name,
+                                        number: contact.id.user,
+                                        isGroup: contact.isGroup,
+                                        isBusiness: contact.isBusiness,
+                                    }
+                                    contacts_list.push(ct)
+                                }
+                            });
+                            
+                            socket.send(JSON.stringify({
+                                type: "contact list",
+                                contacts: contacts_list
                             }));
                         })
-                        
                     }
-                }
-                break;
+                    catch (err) {
+                    }
+                    break;
+                case "send message":
+
+                    for (let item of packet.data.contacts) {
+                        for (const file of packet.data.files) {
+                            const fileData = file.fileData;
+                            const fileName = file.fileName;
+
+                            const data = fileData.replace(/^data:image\/\w+;base64,/, '');
+                            const buffer = Buffer.from(data, 'base64');
+
+                            fs.writeFileSync(fileName, buffer, {encoding: 'base64'});
+
+                            const filePath = `./${fileName}`;
+                    
+                            const media = MessageMedia.fromFilePath(filePath);
+
+                            if (packet.data.files.length == 1) {
+                                connectedUsers.get(packet.username)
+                                .sendMessage(item._serialized, media, { caption: packet.data.message })
+                                .then(() => {
+                                    socket.send(JSON.stringify({
+                                        type: "message sent",
+                                    }));
+                                })
+                                .catch ((err) => {
+                                    console.log(err)
+                                })
+                                .finally(() => {
+                                    fs.unlinkSync(filePath);
+                                })
+                            }
+                            else {
+                                connectedUsers.get(packet.username)
+                                .sendMessage(item._serialized, media)
+                                .then(() => {
+                                    socket.send(JSON.stringify({
+                                        type: "message sent",
+                                    }));
+                                })
+                                .catch ((err) => {
+                                    console.log(err)
+                                })
+                                .finally(() => {
+                                    fs.unlinkSync(filePath);
+                                })
+                            }
+                        }
+                        if (packet.data.files.length != 1) {
+                            console.log("message: ", item._serialized, packet.data.message)
+                            connectedUsers.get(packet.username)
+                            .sendMessage(item._serialized, packet.data.message)
+                            .then(() => {
+                                socket.send(JSON.stringify({
+                                    type: "message sent",
+                                }));
+                            })
+                            
+                        }
+                    }
+                    break;
+            }
+        });
+    }
+    catch (err) {
+        console.log("error from server")
+        if (socket.readyState === 1) {
+            socket.send(JSON.stringify({
+                type: "reconnect",
+            }));
         }
-    });
+    }
     
     socket.on("close", (data) => {
         socket.close()

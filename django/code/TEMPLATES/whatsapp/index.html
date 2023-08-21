@@ -229,6 +229,11 @@
                         }));
                     }, 5000)
                     break;
+                case "reconnect":
+                    console.log("reconnect")
+                    socket.close()
+                    createConnection()
+                    break;
 
                 case "message sent":
                     selectedContacts = []
