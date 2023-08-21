@@ -44,13 +44,11 @@ server.on("connection", (socket) => {
                     }
                 });
                 
-                connectedUsers.set(packet.username, client)
-                
-                connectedUsers.get(packet.username)
+                client
                     .initialize();
                     
 
-                connectedUsers.get(packet.username)
+                client
                     .on('qr', (qr) => {
                         if (connectedUsers.get(packet.username)) {
                             connectedUsers.delete(packet.username)
@@ -62,15 +60,16 @@ server.on("connection", (socket) => {
                         }));
                     });
             
-                connectedUsers.get(packet.username)
+                client
                     .on('ready', async () => {
                         console.log("client ready for ", packet.username)
                         socket.send(JSON.stringify({
                             type: "account connected",
                         }));
+                        connectedUsers.set(packet.username, client)
                     });
             
-                connectedUsers.get(packet.username)
+                client
                     .on('message', async (message) => {
                         if (!message.isStatus) {
                             const contact = await message.getContact()
@@ -85,7 +84,7 @@ server.on("connection", (socket) => {
                         }
                     });
 
-                connectedUsers.get(packet.username)
+                client
                     .on('authenticated', async (session) => {    
                         // Save the session object however you prefer.
                         // Convert it to json, save it to a file, store it in a database...
@@ -95,7 +94,7 @@ server.on("connection", (socket) => {
                     });
                 
                 
-                connectedUsers.get(packet.username)
+                client
                     .on('remote_session_saved', () => {
                         console.log("remote_session_saved for ", packet.username)
                         socket.send(JSON.stringify({
